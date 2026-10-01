@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Быстрый старт с AI — лендинг</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Rubik:wght@300;400;500;600&display=swap">
+<style>
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: 'Rubik', Arial, sans-serif; font-weight: 300; background: #0B1A2E; color: #EDF1F7; overflow-x: hidden; }
+  * { box-sizing: border-box; }
+  h1, h2, h3 { font-family: 'Libre Baskerville', Georgia, serif; margin: 0; font-weight: 700; }
+  button { font-family: 'Rubik', Arial, sans-serif; border: none; cursor: pointer; }
+  a.btn { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; transition: transform .15s ease, box-shadow .15s ease, background .15s ease; font-weight: 500; }
+  a.btn-primary { background: linear-gradient(90deg, #D8BD8C 0%, #B08C56 100%); color: #0B1A2E; box-shadow: 0 8px 24px rgba(176,140,86,0.3); }
+  a.btn-primary:hover { box-shadow: 0 12px 32px rgba(176,140,86,0.42); }
+  a.btn-primary:active { transform: scale(0.97); }
+  a.navlink { color: #9FB0C6; text-decoration: none; font-size: 14px; font-weight: 400; transition: color .2s ease; white-space: nowrap; position: relative; }
+  a.navlink::after { content: ''; position: absolute; left: 0; right: 100%; bottom: -4px; height: 1px; background: #D8BD8C; transition: right .25s ease; }
+  a.navlink:hover { color: #D8BD8C; }
+  a.navlink:hover::after { right: 0; }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 40px; box-sizing: border-box; width: 100%; }
+  .grad-text { background: linear-gradient(90deg, #D8BD8C 0%, #B08C56 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .card { background: rgba(255,255,255,0.035); border: 1px solid rgba(216,189,140,0.14); border-radius: 18px; transition: transform .2s ease, border-color .2s ease, background .2s ease; }
+  .card:hover { transform: translateY(-4px); border-color: rgba(216,189,140,0.4); background: rgba(255,255,255,0.055); }
+  .card-light { background: #FFFFFF; border: 1px solid #E1E5EC; border-radius: 18px; transition: transform .25s ease, box-shadow .25s ease; }
+  @keyframes floatBlob { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(20px,-16px) scale(1.05); } }
+  @keyframes pulseGlow { 0%,100% { opacity: 0.4; } 50% { opacity: 0.7; } }
+  @keyframes pulseDot { 0%,100% { box-shadow: 0 0 0 6px rgba(216,189,140,0.16); } 50% { box-shadow: 0 0 0 10px rgba(216,189,140,0.26); } }
+  .blob { position: absolute; border-radius: 50%; filter: blur(2px); animation: floatBlob 9s ease-in-out infinite, pulseGlow 6s ease-in-out infinite; }
+  .chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 500; }
+  .reveal, .reveal-left, .reveal-right { opacity: 0; transition: opacity .7s ease, transform .7s ease; }
+  .reveal { transform: translateY(28px); }
+  .reveal-left { transform: translateX(-36px); }
+  .reveal-right { transform: translateX(36px); }
+  .reveal.is-visible, .reveal-left.is-visible, .reveal-right.is-visible { opacity: 1; transform: translate(0,0); }
+  .faq-row:hover h3 { color: #D8BD8C; }
+  .nav-links { display: flex; align-items: center; gap: 22px; }
+  .hero-copy { flex: 1.2; min-width: 300px; }
+  .hero-visual { flex: 1; min-width: 260px; display: flex; justify-content: center; }
+  .stat-num { font-family: 'Libre Baskerville', Georgia, serif; font-size: 42px; font-weight: 700; }
+  .included-row { display: flex; align-items: flex-start; gap: 20px; padding: 22px 0; border-bottom: 1px solid rgba(216,189,140,0.14); }
+  .niches-viewport { width: 100%; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
+  .niches-track { display: flex; gap: 18px; width: max-content; padding: 6px 0 18px; animation: nicheMarquee 34s linear infinite; }
+  @keyframes nicheMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .niche-card { flex: 0 0 250px; }
+  .flip-card { position: relative; height: 300px; }
+  .flip-face { position: absolute; inset: 0; border-radius: 18px; display: flex; flex-direction: column; transition: opacity .5s ease, transform .5s ease; overflow-y: auto; scrollbar-width: none; }
+  .flip-face::-webkit-scrollbar { display: none; }
+  .pain-row { position: relative; overflow: hidden; cursor: default; transition: background .3s ease, border-color .3s ease; }
+
+  /* --- Поведение, которое в артефакте считал JS-движок канвы, здесь задаётся
+     явными классами: JS ниже только переключает классы/инлайн-стили. --- */
+  #progressBar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg,#D8BD8C,#B08C56); width: 0%; z-index: 30; }
+
+  #siteNav { width: 100%; position: sticky; top: 0; z-index: 10; background: rgba(11,26,46,0.35); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(216,189,140,0.04); transition: background .25s ease, box-shadow .25s ease; }
+  #siteNav.scrolled { background: rgba(11,26,46,0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(216,189,140,0.14); box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 88px; transition: height .25s ease; }
+  #siteNav.scrolled .nav-inner { height: 68px; }
+
+  #backToTop { position: fixed; bottom: 32px; right: 32px; width: 48px; height: 48px; border-radius: 24px; background: linear-gradient(135deg,#D8BD8C,#B08C56); color: #0B1A2E; font-size: 20px; box-shadow: 0 12px 28px rgba(0,0,0,0.35); opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .25s ease, transform .25s ease; z-index: 15; cursor: pointer; }
+  #backToTop.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+  #tiltCard, #pricingTilt, #magnetBtn { transition: transform .12s ease-out; }
+
+  .flip-face.front { opacity: 1; transform: scale(1); }
+  .flip-face.back { opacity: 0; transform: scale(0.94); pointer-events: none; }
+  .flip-card.flipped .flip-face.front { opacity: 0; transform: scale(0.94); pointer-events: none; }
+  .flip-card.flipped .flip-face.back { opacity: 1; transform: scale(1); pointer-events: auto; }
+
+  .faq-answer { max-height: 0px; opacity: 0; padding-bottom: 0px; overflow: hidden; transition: max-height .35s ease, opacity .3s ease; }
+  .faq-row.open ~ .faq-answer { max-height: 220px; opacity: 1; padding-bottom: 18px; }
+  .faq-icon { display: inline-block; transform: rotate(0deg); transition: transform .25s ease; font-size: 22px; color: #8A96A6; }
+  .faq-row.open .faq-icon { transform: rotate(45deg); color: #D8BD8C; }
+
+  .pain-row { border-bottom: 1px solid rgba(150,112,58,0.16); background: transparent; }
+  .pain-row.hovered { background: rgba(216,189,140,0.10); }
+  .pain-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 0px; background: linear-gradient(180deg,#D8BD8C,#B08C56); transition: width .25s ease; }
+  .pain-row.hovered .pain-bar { width: 4px; }
+  .pain-tag { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: #B0A88F; transition: color .25s ease; }
+  .pain-row.hovered .pain-tag { color: #96703A; }
+  .pain-text { font-size: 16px; line-height: 1.5; font-weight: 300; color: #5C6B80; transition: color .25s ease; }
+  .pain-row.hovered .pain-text { color: #10233B; }
+
+  .cmp-header { display: grid; grid-template-columns: 1.3fr 1fr 1fr; column-gap: 20px; padding: 18px 20px; background: rgba(255,255,255,0.04); font-size: 15px; }
+  .cmp-row { display: grid; grid-template-columns: 1.3fr 1fr 1fr; column-gap: 20px; padding: 18px 20px; align-items: start; border-top: 1px solid rgba(216,189,140,0.12); font-size: 15px; }
+  .cmp-task { color: #EDF1F7; font-weight: 400; }
+  .cmp-label { display: none; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #7488A0; margin-right: 8px; }
+  .cmp-cell { color: #A9B7CA; font-weight: 300; }
+
+  @media (max-width: 760px) {
+    .navlink { display: none; }
+    .container { padding: 0 20px; }
+  }
+  @media (max-width: 640px) {
+    .chip-hero { font-size: 12px; padding: 7px 12px; }
+    .price-text { font-size: 28px; }
+    .pricing-tilt { padding: 32px 20px; }
+    .cmp-header { display: none; }
+    .cmp-row { display: flex; flex-direction: column; gap: 8px; }
+    .cmp-label { display: inline; }
+  }
+  @media (max-width: 600px) {
+    h1 { font-size: 34px !important; line-height: 1.25 !important; }
+    h2 { font-size: 26px !important; }
+    a.btn-primary { font-size: 13px !important; padding: 10px 18px !important; }
+    .flip-card { height: 300px !important; }
+  }
+</style>
+</head>
+<body>
+
+<div style="width: 100%; display: flex; flex-direction: column; position: relative;">
+
+  <div id="progressBar"></div>
+
+  <!-- NAV -->
+  <div id="siteNav">
+    <div class="container nav-inner">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #D8BD8C 0%, #B08C56 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <span style="font-family: 'Libre Baskerville', Georgia, serif; font-weight: 700; font-size: 17px; color: #0B1A2E;">V</span>
+        </div>
+        <span style="font-size: 17px; font-weight: 500; color: #EDF1F7; white-space: nowrap;">Валерия · AI-консалтинг</span>
+      </div>
+      <div class="nav-links">
+        <a class="navlink optional" href="#capabilities">Возможности</a>
+        <a class="navlink" href="#product">Продукт</a>
+        <a class="navlink" href="#how">Как работает</a>
+        <a class="navlink" href="#pricing">Цена</a>
+        <a class="navlink optional" href="#cases">С кем работаем</a>
+        <a class="navlink" href="#faq">Вопросы</a>
+        <a class="btn btn-primary" href="https://t.me/valeria_ai_consult_bot" style="padding: 11px 22px; border-radius: 22px; font-size: 14px;">Telegram</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div id="heroSection" style="width: 100%; background: radial-gradient(circle at 20% 15%, #142944 0%, #0B1A2E 55%); position: relative; overflow: hidden;">
+    <div id="blobA" style="position: absolute; width: 460px; height: 460px; right: -140px; top: -120px; background: #C9A876; opacity: 0.16; border-radius: 50%; filter: blur(2px); animation: pulseGlow 6s ease-in-out infinite;"></div>
+    <div id="blobB" style="position: absolute; width: 380px; height: 380px; left: -120px; top: 260px; background: #3A5578; opacity: 0.24; border-radius: 50%; filter: blur(2px); animation: pulseGlow 7s ease-in-out infinite;"></div>
+    <div id="spotlight" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(560px circle at 50% 30%, rgba(216,189,140,0.10), transparent 60%);"></div>
+    <div class="container" style="padding-top: 100px; padding-bottom: 90px; position: relative; display: flex; gap: 64px; align-items: center; flex-wrap: wrap;">
+
+      <div class="hero-copy" style="display: flex; flex-direction: column; gap: 28px;">
+        <span class="chip chip-hero" style="background: rgba(216,189,140,0.12); color: #D8BD8C; border: 1px solid rgba(216,189,140,0.3); white-space: nowrap;">✦ AI-консалтинг для малого бизнеса</span>
+        <h1 style="font-size: 58px; line-height: 1.18; color: #EDF1F7; font-weight: 700;">AI, который экономит<br>вам <span class="grad-text">часы каждую неделю</span></h1>
+        <p style="font-size: 19px; line-height: 1.6; color: #A9B7CA; max-width: 560px; font-weight: 300;">Настраиваю ChatGPT и Claude под ваши задачи: посты, ответы клиентам, документы и чек-листы. Технических знаний с вашей стороны не нужно.</p>
+        <div style="display: flex; align-items: center; gap: 22px; margin-top: 8px; flex-wrap: wrap;">
+          <a id="magnetBtn" class="btn btn-primary" href="https://t.me/valeria_ai_consult_bot" style="padding: 18px 36px; border-radius: 28px; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; transform: translate(0px,0px);">Обсудить в Telegram →</a>
+          <span style="font-size: 15px; color: #7488A0;">Первая консультация — бесплатно</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div id="tiltCard" style="width: 100%; max-width: 380px; padding: 28px; display: flex; flex-direction: column; background: rgba(255,255,255,0.045); border: 1px solid rgba(216,189,140,0.16); border-radius: 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.35); transform: perspective(900px) rotateX(0deg) rotateY(0deg);">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 10px; height: 10px; border-radius: 5px; background: #B08C56;"></div>
+            <div style="width: 10px; height: 10px; border-radius: 5px; background: #D8BD8C;"></div>
+            <div style="width: 10px; height: 10px; border-radius: 5px; background: #5E7898;"></div>
+            <span style="margin-left: 8px; font-size: 13px; color: #7488A0;">Ассистент клиента</span>
+          </div>
+          <div style="align-self: flex-end; max-width: 88%; background: linear-gradient(90deg, #D8BD8C 0%, #B08C56 100%); color: #0B1A2E; padding: 12px 16px; border-radius: 14px 14px 4px 14px; font-size: 14px; line-height: 1.4; margin-top: 16px;">Напиши ответ клиенту про перенос записи на завтра</div>
+          <div style="align-self: flex-start; max-width: 88%; background: rgba(255,255,255,0.06); color: #EDF1F7; padding: 12px 16px; border-radius: 14px 14px 14px 4px; font-size: 14px; line-height: 1.4; margin-top: 16px;">Конечно! Вот вежливый вариант:<br>«Добрый день! Уточните, пожалуйста, удобно ли перенести запись на завтра в это же время?»</div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.08);">
+            <span style="font-size: 13px; color: #7488A0;">Сгенерировано за 4 секунды</span>
+            <span style="font-size: 13px; color: #D8BD8C;">●&nbsp;онлайн</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-trigger" style="width: 100%; background: #10233B; border-top: 1px solid rgba(216,189,140,0.12); border-bottom: 1px solid rgba(216,189,140,0.12);">
+    <div class="container" style="padding-top: 48px; padding-bottom: 48px; display: flex; gap: 32px; flex-wrap: wrap; justify-content: space-between;">
+      <div style="flex: 1; min-width: 150px; text-align: center; display: flex; flex-direction: column; gap: 6px;">
+        <div class="stat-num grad-text" data-target="5" data-suffix="+">0+</div>
+        <div style="font-size: 14px; color: #7488A0;">предпринимателей уже внедряют AI</div>
+      </div>
+      <div style="flex: 1; min-width: 150px; text-align: center; display: flex; flex-direction: column; gap: 6px;">
+        <div class="stat-num grad-text" data-target="2" data-suffix="">0</div>
+        <div style="font-size: 14px; color: #7488A0;">недели — обычный срок сборки</div>
+      </div>
+      <div style="flex: 1; min-width: 150px; text-align: center; display: flex; flex-direction: column; gap: 6px;">
+        <div class="stat-num grad-text" data-target="4" data-suffix="">0</div>
+        <div style="font-size: 14px; color: #7488A0;">секунды на черновик ответа</div>
+      </div>
+      <div style="flex: 1; min-width: 150px; text-align: center; display: flex; flex-direction: column; gap: 6px;">
+        <div class="stat-num grad-text" data-target="0" data-suffix="">0</div>
+        <div style="font-size: 14px; color: #7488A0;">строк кода нужно от вас</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAIN POINTS -->
+  <div style="width: 100%; background: #F7F4EC;">
+    <div class="container" style="padding-top: 100px; padding-bottom: 100px; display: flex; flex-direction: column; gap: 56px;">
+      <div class="reveal" style="display: flex; flex-direction: column; gap: 10px;">
+        <span style="font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #96703A;">Знакомо?</span>
+        <h2 style="font-size: 36px; color: #10233B;">Три вещи, которые крадут ваше время</h2>
+      </div>
+      <div class="reveal" style="display: flex; flex-direction: column; border-top: 1px solid rgba(150,112,58,0.16);">
+
+        <div class="pain-row" data-problem="Каждый день одно и то же — можно делегировать нейросети за минуты." data-solution="Делегируйте черновики AI — освободите 5–10 часов в неделю.">
+          <div class="pain-bar"></div>
+          <div style="display: flex; align-items: center; gap: 20px; padding: 30px 4px 30px 28px;">
+            <span style="font-size: 26px; flex-shrink: 0;">⏱</span>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+              <h3 style="font-size: 20px; color: #10233B;">Часы уходят на посты и ответы клиентам</h3>
+              <span class="pain-tag">Знакомая ситуация</span>
+              <p class="pain-text">Каждый день одно и то же — можно делегировать нейросети за минуты.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pain-row" data-problem="Нет единой системы — сложно передать дела и стандарты команде." data-solution="Соберём единый чек-лист и регламент, которые легко передать команде.">
+          <div class="pain-bar"></div>
+          <div style="display: flex; align-items: center; gap: 20px; padding: 30px 4px 30px 28px;">
+            <span style="font-size: 26px; flex-shrink: 0;">🗂</span>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+              <h3 style="font-size: 20px; color: #10233B;">Документы собраны как попало</h3>
+              <span class="pain-tag">Знакомая ситуация</span>
+              <p class="pain-text">Нет единой системы — сложно передать дела и стандарты команде.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pain-row" data-problem="Без правильных промптов и структуры ChatGPT даёт общие, бесполезные ответы." data-solution="Дам готовые промпты и структуру — результат заметен с первого раза.">
+          <div class="pain-bar"></div>
+          <div style="display: flex; align-items: center; gap: 20px; padding: 30px 4px 30px 28px;">
+            <span style="font-size: 26px; flex-shrink: 0;">🤖</span>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 6px;">
+              <h3 style="font-size: 20px; color: #10233B;">Пробовали AI сами — не пошло</h3>
+              <span class="pain-tag">Знакомая ситуация</span>
+              <p class="pain-text">Без правильных промптов и структуры ChatGPT даёт общие, бесполезные ответы.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CAPABILITIES TABS -->
+  <div id="capabilities" style="width: 100%; background: #0B1A2E;">
+    <div class="container" style="padding-top: 100px; padding-bottom: 100px; display: flex; flex-direction: column; gap: 40px;">
+      <div class="reveal" style="display: flex; flex-direction: column; gap: 12px;">
+        <span style="font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #D8BD8C;">Возможности</span>
+        <h2 style="font-size: 36px; color: #EDF1F7;">Что умеет AI уже сегодня</h2>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+
+        <div class="flip-card reveal">
+          <div class="flip-face front" style="background: rgba(255,255,255,0.045); border: 1px solid rgba(216,189,140,0.16); border-top: 3px solid #D8BD8C; padding: 26px; align-items: center; text-align: center; justify-content: center;">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 16px; background: #D8BD8C22; font-size: 28px;">📝</span>
+            <h3 style="font-size: 19px; color: #EDF1F7; margin-top: 14px;">Контент</h3>
+          </div>
+          <div class="flip-face back" style="background: linear-gradient(180deg,#F7F4EC,#EFE9DC); border: 1px solid rgba(176,140,86,0.3); border-top: 3px solid #D8BD8C; padding: 24px; justify-content: flex-start;">
+            <h3 style="font-size: 16px; line-height: 1.3; color: #0B1A2E;">Посты без ступора</h3>
+            <p style="font-size: 12.5px; line-height: 1.4; color: #5C6B80; font-weight: 300; margin-top: 8px;">AI пишет черновик поста за минуту — вы правите под свой голос.</p>
+            <p style="font-size: 12.5px; line-height: 1.4; color: #10233B; font-weight: 400; margin-top: auto;">✓ Темы на месяц вперёд<br>✓ Черновик за 1 запрос</p>
+          </div>
+        </div>
+
+        <div class="flip-card reveal">
+          <div class="flip-face front" style="background: rgba(255,255,255,0.045); border: 1px solid rgba(216,189,140,0.16); border-top: 3px solid #7C97B8; padding: 26px; align-items: center; text-align: center; justify-content: center;">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 16px; background: #7C97B822; font-size: 28px;">💬</span>
+            <h3 style="font-size: 19px; color: #EDF1F7; margin-top: 14px;">Клиенты</h3>
+          </div>
+          <div class="flip-face back" style="background: linear-gradient(180deg,#F7F4EC,#EFE9DC); border: 1px solid rgba(176,140,86,0.3); border-top: 3px solid #7C97B8; padding: 24px; justify-content: flex-start;">
+            <h3 style="font-size: 16px; line-height: 1.3; color: #0B1A2E;">Ответы без напряжения</h3>
+            <p style="font-size: 12.5px; line-height: 1.4; color: #5C6B80; font-weight: 300; margin-top: 8px;">Вежливые формулировки и работа с возражениями — за секунды.</p>
+            <p style="font-size: 12.5px; line-height: 1.4; color: #10233B; font-weight: 400; margin-top: auto;">✓ Шаблоны на частые вопросы<br>✓ Экономия 5–10 ч в неделю</p>
+          </div>
+        </div>
+
+        <div class="flip-card reveal">
+          <div class="flip-face front" style="background: rgba(255,255,255,0.045); border: 1px solid rgba(216,189,140,0.16); border-top: 3px solid #7BA88F; padding: 26px; align-items: center; text-align: center; justify-content: center;">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 16px; background: #7BA88F22; font-size: 28px;">📋</span>
+            <h3 style="font-size: 19px; color: #EDF1F7; margin-top: 14px;">Документы</h3>
+          </div>
+          <div class="flip-face back" style="background: linear-gradient(180deg,#F7F4EC,#EFE9DC); border: 1px solid rgba(176,140,86,0.3); border-top: 3px solid #7BA88F; padding: 24px; justify-content: flex-start;">
+            <h3 style="font-size: 16px; line-height: 1.3; color: #0B1A2E;">Порядок в чек-листах</h3>
+            <p style="font-size: 12.5px; line-height: 1.4; color: #5C6B80; font-weight: 300; margin-top: 8px;">Вместо разрозненных заметок — единый регламент для команды.</p>
+            <p style="font-size: 12.5px; line-height: 1.4; color: #10233B; font-weight: 400; margin-top: auto;">✓ Чек-листы под вашу нишу<br>✓ Инструкции для новичков</p>
+          </div>
+        </div>
+
+        <div class="flip-card reveal">
+          <div class="flip-face front" style="background: rgba(255,255,255,0.045); border: 1px solid rgba(216,189,140,0.16); border-top: 3px solid #C98F6E; padding: 26px; align-items: center; text-align: center; justify-content: center;">
+            <span style="display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 16px; background: #C98F6E22; font-size: 28px;">💡</span>
+            <h3 style="font-size: 19px; color: #EDF1F7; margin-top: 14px;">Идеи</h3>
+          </div>
+          <div class="flip-face back" style="background: linear-gradient(180deg,#F7F4EC,#EFE9DC); border: 1px solid rgba(176,140,86,0.3); border-top: 3px solid #C98F6E; padding: 24px; justify-content: flex-start;">
+            <h3 style="font-size: 16px; line-height: 1.3; color: #0B1A2E;">Разбор и идеи</h3>
+            <p style="font-size: 12.5px; line-height: 1.4; color: #5C6B80; font-weight: 300; margin-top: 8px;">AI раскладывает отзывы и конкурентов по полочкам за минуты.</p>
+            <p style="font-size: 12.5px; line-height: 1.4; color: #10233B; font-weight: 400; margin-top: auto;">✓ Разбор отзывов<br>✓ Анализ конкурентов</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT'S INCLUDED (list) -->
+  <div id="product" style="width: 100%; background: #10233B; position: relative; overflow: hidden;">
+    <div class="blob" style="width: 420px; height: 420px; right: -160px; bottom: -140px; background: #3A5578; opacity: 0.18;"></div>
+    <div class="container" style="padding-top: 100px; padding-bottom: 90px; display: flex; flex-direction: column; gap: 12px; position: relative;">
+      <div class="reveal" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+        <span style="font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #D8BD8C;">Продукт</span>
+        <h2 style="font-size: 36px; color: #EDF1F7;">Внутри пакета «Быстрый старт с AI»</h2>
+      </div>
+
+      <div class="included-row reveal-left">
+        <span style="font-size: 26px;">✅</span>
+        <div><h3 style="font-size: 19px; color: #EDF1F7; margin-bottom: 4px;">Чек-лист внедрения AI</h3><p style="font-size: 15px; color: #A9B7CA; font-weight: 300; margin: 0;">Пошаговый план, что и как автоматизировать в вашей работе</p></div>
+      </div>
+      <div class="included-row reveal-right" style="transition-delay: .08s;">
+        <span style="font-size: 26px;">💬</span>
+        <div><h3 style="font-size: 19px; color: #EDF1F7; margin-bottom: 4px;">Промпты под ваши задачи</h3><p style="font-size: 15px; color: #A9B7CA; font-weight: 300; margin: 0;">Готовые команды для ChatGPT и Claude под ответы клиентам и посты</p></div>
+      </div>
+      <div class="included-row reveal-left" style="transition-delay: .16s;">
+        <span style="font-size: 26px;">🗓</span>
+        <div><h3 style="font-size: 19px; color: #EDF1F7; margin-bottom: 4px;">Контент-план на месяц</h3><p style="font-size: 15px; color: #A9B7CA; font-weight: 300; margin: 0;">Темы и структура постов, которые нейросеть допишет за вас</p></div>
+      </div>
+      <div class="included-row reveal-right" style="border-bottom: none; transition-delay: .24s;">
+        <span style="font-size: 26px;">📘</span>
+        <div><h3 style="font-size: 19px; color: #EDF1F7; margin-bottom: 4px;">Шаблон регламента</h3><p style="font-size: 15px; color: #A9B7CA; font-weight: 300; margin: 0;">Инструкция для команды — единый стандарт работы с AI</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS (scroll-filling timeline) -->
+  <div id="how" style="width: 100%; background: #F7F4EC;">
+    <div class="container" style="padding-top: 100px; padding-bottom: 100px; display: flex; flex-direction: column; gap: 56px;">
+      <h2 class="reveal" style="font-size: 36px; color: #10233B;">Как это устроено</h2>
+      <div class="timeline-wrap" style="position: relative;">
+        <div id="timelineTrack" style="position: absolute; width: 2px; background: rgba(150,112,58,0.15); transform: translateX(-1px);"></div>
+        <div id="timelineFill" style="position: absolute; width: 2px; transform: translateX(-1px); background: linear-gradient(180deg,#B08C56,#7C97B8); height: 0px;"></div>
+        <div id="timelineDot" style="position: absolute; width: 16px; height: 16px; border-radius: 8px; background: #D8BD8C; animation: pulseDot 1.6s ease-in-out infinite; transform: translate(-8px,-8px);"></div>
+        <div style="display: flex; flex-direction: column; gap: 48px; position: relative;">
+          <div style="display: flex; gap: 24px; align-items: center;">
+            <div class="step-dot" style="width: 40px; height: 40px; border-radius: 20px; background: linear-gradient(135deg,#D8BD8C,#B08C56); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0B1A2E; font-size: 16px; font-family: 'Libre Baskerville', Georgia, serif; flex-shrink: 0;">1</div>
+            <div><h3 style="font-size: 19px; color: #10233B;">Бесплатный разбор</h3><p style="font-size: 15px; line-height: 1.5; color: #5C6B80; font-weight: 300; margin-top: 6px;">15–20 минут в Telegram: обсуждаем вашу задачу</p></div>
+          </div>
+          <div style="display: flex; gap: 24px; align-items: center;">
+            <div class="step-dot" style="width: 40px; height: 40px; border-radius: 20px; background: linear-gradient(135deg,#D8BD8C,#B08C56); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0B1A2E; font-size: 16px; font-family: 'Libre Baskerville', Georgia, serif; flex-shrink: 0;">2</div>
+            <div><h3 style="font-size: 19px; color: #10233B;">Сборка набора</h3><p style="font-size: 15px; line-height: 1.5; color: #5C6B80; font-weight: 300; margin-top: 6px;">Готовлю чек-листы, промпты и контент под вашу нишу</p></div>
+          </div>
+          <div style="display: flex; gap: 24px; align-items: center;">
+            <div class="step-dot" style="width: 40px; height: 40px; border-radius: 20px; background: linear-gradient(135deg,#D8BD8C,#B08C56); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0B1A2E; font-size: 16px; font-family: 'Libre Baskerville', Georgia, serif; flex-shrink: 0;">3</div>
+            <div><h3 style="font-size: 19px; color: #10233B;">Передача и внедрение</h3><p style="font-size: 15px; line-height: 1.5; color: #5C6B80; font-weight: 300; margin-top: 6px;">Показываю, как пользоваться, отвечаю на вопросы</p></div>
+          </div>
+          <div style="display: flex; gap: 24px; align-items: center;">
+            <div class="step-dot" style="width: 40px; height: 40px; border-radius: 20px; background: linear-gradient(135deg,#D8BD8C,#B08C56); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #0B1A2E; font-size: 16px; font-family: 'Libre Baskerville', Georgia, serif; flex-shrink: 0;">4</div>
+            <div><h3 style="font-size: 19px; color: #10233B;">Поддержка</h3><p style="font-size: 15px; line-height: 1.5; color: #5C6B80; font-weight: 300; margin-top: 6px;">На связи, если нужно что-то поправить или обновить</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARISON -->
+  <div style="width: 100%; background: #0B1A2E;">
+    <div class="container" style="padding-top: 90px; padding-bottom: 100px; display: flex; flex-direction: column; gap: 40px;">
+      <h2 class="reveal" style="font-size: 32px; color: #EDF1F7;">С AI и без него — разница на практике</h2>
+      <div class="reveal" style="border: 1px solid rgba(216,189,140,0.16); border-radius: 18px; overflow: hidden;">
+        <div class="cmp-header">
+          <div style="font-weight: 500; color: #EDF1F7;">Задача</div>
+          <div style="font-weight: 500; color: #8FA0B8;">Без AI</div>
+          <div style="font-weight: 500; color: #D8BD8C;">С AI</div>
+        </div>
+
+        <div class="cmp-row">
+          <div class="cmp-task">Ответ клиенту</div>
+          <div class="cmp-cell"><span class="cmp-label">Без AI</span>10–15 минут на формулировку</div>
+          <div class="cmp-cell"><span class="cmp-label">С AI</span>~30 секунд, есть на что опереться</div>
+        </div>
+        <div class="cmp-row">
+          <div class="cmp-task">Пост в соцсети</div>
+          <div class="cmp-cell"><span class="cmp-label">Без AI</span>Полчаса на текст и подбор слов</div>
+          <div class="cmp-cell"><span class="cmp-label">С AI</span>Черновик за 1 минуту</div>
+        </div>
+        <div class="cmp-row">
+          <div class="cmp-task">Чек-лист или регламент</div>
+          <div class="cmp-cell"><span class="cmp-label">Без AI</span>Хаос в заметках и памяти</div>
+          <div class="cmp-cell"><span class="cmp-label">С AI</span>Структурированный документ</div>
+        </div>
+        <div class="cmp-row">
+          <div class="cmp-task">Обучение нового сотрудника</div>
+          <div class="cmp-cell"><span class="cmp-label">Без AI</span>Объяснять всё лично каждый раз</div>
+          <div class="cmp-cell"><span class="cmp-label">С AI</span>Готовая инструкция под рукой</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div id="pricing" style="width: 100%; background: radial-gradient(circle at 50% 0%, #142944 0%, #0B1A2E 60%); position: relative; overflow: hidden;">
+    <div class="blob" style="width: 380px; height: 380px; left: 50%; top: -180px; margin-left: -190px; background: #C9A876; opacity: 0.14;"></div>
+    <div class="container" style="padding-top: 100px; padding-bottom: 110px; display: flex; justify-content: center; position: relative;">
+      <div id="pricingTilt" class="reveal pricing-tilt" style="max-width: 560px; width: 100%; background: linear-gradient(180deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(216,189,140,0.22); border-radius: 24px; padding: 52px; display: flex; flex-direction: column; gap: 22px; align-items: center; text-align: center; box-shadow: 0 30px 70px rgba(0,0,0,0.4); transform: perspective(1000px) rotateX(0deg) rotateY(0deg);">
+        <span class="chip" style="background: rgba(216,189,140,0.12); color: #D8BD8C; border: 1px solid rgba(216,189,140,0.3);">Пакет</span>
+        <h3 style="font-size: 28px; color: #EDF1F7;">Быстрый старт с AI</h3>
+        <div class="price-text grad-text" style="font-family: 'Libre Baskerville', Georgia, serif; font-weight: 700; white-space: nowrap; font-size: 46px;">2 900–7 900 ₽</div>
+        <p style="font-size: 15px; color: #7488A0; font-weight: 300;">точная цена — по итогам бесплатного разбора</p>
+        <a class="btn btn-primary" href="https://t.me/valeria_ai_consult_bot" style="padding: 16px 40px; border-radius: 28px; font-size: 16px; margin-top: 8px;">Хочу такой набор →</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- NICHES (self-moving marquee carousel) -->
+  <div id="cases" style="width: 100%; background: #F7F4EC;">
+    <div class="container" style="padding-top: 84px; padding-bottom: 84px; display: flex; flex-direction: column; gap: 32px;">
+      <div class="reveal" style="display: flex; flex-direction: column; gap: 18px; max-width: 760px;">
+        <span style="font-size: 14px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: #96703A;">С кем работаем</span>
+        <h2 style="font-size: 32px; color: #10233B;">Ниши, где AI уже приносит пользу</h2>
+      </div>
+      <div class="niches-viewport">
+        <div class="niches-track">
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-size: 22px;">🧭</span>
+            <h3 style="font-size: 17px; color: #10233B;">Эксперты и консультанты</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Систематизация экспертного контента и ответов клиентам</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-size: 22px;">🏢</span>
+            <h3 style="font-size: 17px; color: #10233B;">Небольшие агентства и студии</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Регламенты и шаблоны для команды из 2–10 человек</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-size: 22px;">🎓</span>
+            <h3 style="font-size: 17px; color: #10233B;">Онлайн-обучение</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Контент-планы и ответы на вопросы учеников</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-size: 22px;">🛠</span>
+            <h3 style="font-size: 17px; color: #10233B;">Сфера услуг на выезде</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Чек-листы, переписка с клиентами, запись и напоминания</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-size: 22px;">🛍</span>
+            <h3 style="font-size: 17px; color: #10233B;">Розница и шоурумы</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Описания товаров и ответы в директ без задержек</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;">
+            <span style="font-size: 22px;">💼</span>
+            <h3 style="font-size: 17px; color: #10233B;">Фрилансеры и специалисты</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Экономия времени на рутинных текстах и переписке</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;" aria-hidden="true">
+            <span style="font-size: 22px;">🧭</span>
+            <h3 style="font-size: 17px; color: #10233B;">Эксперты и консультанты</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Систематизация экспертного контента и ответов клиентам</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;" aria-hidden="true">
+            <span style="font-size: 22px;">🏢</span>
+            <h3 style="font-size: 17px; color: #10233B;">Небольшие агентства и студии</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Регламенты и шаблоны для команды из 2–10 человек</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;" aria-hidden="true">
+            <span style="font-size: 22px;">🎓</span>
+            <h3 style="font-size: 17px; color: #10233B;">Онлайн-обучение</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Контент-планы и ответы на вопросы учеников</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;" aria-hidden="true">
+            <span style="font-size: 22px;">🛠</span>
+            <h3 style="font-size: 17px; color: #10233B;">Сфера услуг на выезде</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Чек-листы, переписка с клиентами, запись и напоминания</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;" aria-hidden="true">
+            <span style="font-size: 22px;">🛍</span>
+            <h3 style="font-size: 17px; color: #10233B;">Розница и шоурумы</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Описания товаров и ответы в директ без задержек</p>
+          </div>
+          <div class="niche-card card-light" style="padding: 28px; display: flex; flex-direction: column; gap: 10px;" aria-hidden="true">
+            <span style="font-size: 22px;">💼</span>
+            <h3 style="font-size: 17px; color: #10233B;">Фрилансеры и специалисты</h3>
+            <p style="font-size: 14px; line-height: 1.5; color: #5C6B80; font-weight: 300;">Экономия времени на рутинных текстах и переписке</p>
+          </div>
+        </div>
+      </div>
+      <p class="reveal" style="font-size: 14px; color: #8A7A56; font-style: italic; text-align: center;">Реальные кейсы с цифрами появятся здесь по мере работы с клиентами.</p>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div id="faq" style="width: 100%; background: #0B1A2E;">
+    <div class="container" style="padding-top: 90px; padding-bottom: 90px; display: flex; flex-direction: column; gap: 30px; max-width: 760px;">
+      <h2 class="reveal" style="font-size: 32px; color: #EDF1F7;">Частые вопросы</h2>
+      <div class="reveal" style="display: flex; flex-direction: column;">
+
+        <div style="border-bottom: 1px solid rgba(216,189,140,0.14);">
+          <div class="faq-row" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 20px 0;">
+            <h3 style="font-size: 17px; color: #EDF1F7; margin: 0; transition: color .2s ease; font-weight: 400;">Нужны технические навыки?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <p style="font-size: 15px; line-height: 1.5; color: #A9B7CA; margin: 0; font-weight: 300;">Нет. Всё настраивается под вас и объясняется простыми словами.</p>
+          </div>
+        </div>
+
+        <div style="border-bottom: 1px solid rgba(216,189,140,0.14);">
+          <div class="faq-row" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 20px 0;">
+            <h3 style="font-size: 17px; color: #EDF1F7; margin: 0; transition: color .2s ease; font-weight: 400;">Сколько занимает внедрение?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <p style="font-size: 15px; line-height: 1.5; color: #A9B7CA; margin: 0; font-weight: 300;">Обычно 1–2 недели от разбора до готового набора.</p>
+          </div>
+        </div>
+
+        <div style="border-bottom: 1px solid rgba(216,189,140,0.14);">
+          <div class="faq-row" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 20px 0;">
+            <h3 style="font-size: 17px; color: #EDF1F7; margin: 0; transition: color .2s ease; font-weight: 400;">Как оплатить?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <p style="font-size: 15px; line-height: 1.5; color: #A9B7CA; margin: 0; font-weight: 300;">Переводом на карту или по счёту — работаю как самозанятая, чек формируется автоматически.</p>
+          </div>
+        </div>
+
+        <div style="border-bottom: 1px solid rgba(216,189,140,0.14);">
+          <div class="faq-row" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding: 20px 0;">
+            <h3 style="font-size: 17px; color: #EDF1F7; margin: 0; transition: color .2s ease; font-weight: 400;">Что если мне не подойдёт?</h3>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-answer">
+            <p style="font-size: 15px; line-height: 1.5; color: #A9B7CA; margin: 0; font-weight: 300;">На бесплатном разборе честно скажу, будет ли польза именно вам — не буду продавать то, что не сработает.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER CTA -->
+  <div style="width: 100%; background: #0B1A2E; position: relative; overflow: hidden;">
+    <div class="blob" style="width: 360px; height: 360px; right: 10%; bottom: -160px; background: #3A5578; opacity: 0.2;"></div>
+    <div class="container" style="padding-top: 100px; padding-bottom: 100px; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; position: relative;">
+      <h2 class="reveal" style="font-size: 36px; color: #EDF1F7;">Готовы попробовать <span class="grad-text">AI в деле?</span></h2>
+      <a class="btn btn-primary" href="https://t.me/valeria_ai_consult_bot" style="padding: 18px 40px; border-radius: 28px; font-size: 16px;">Написать в Telegram →</a>
+      <p style="font-size: 14px; color: #5C6B80; margin-top: 8px; font-weight: 300;">Валерия · AI-консалтинг для малого бизнеса · pravodelova2001@gmail.com</p>
+    </div>
+  </div>
+
+  <button id="backToTop" aria-label="Наверх">↑</button>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Scroll progress bar + sticky nav + back-to-top ----------
+  var progressBar = document.getElementById('progressBar');
+  var siteNav = document.getElementById('siteNav');
+  var backToTop = document.getElementById('backToTop');
+  var blobA = document.getElementById('blobA');
+  var blobB = document.getElementById('blobB');
+
+  function onScroll() {
+    var scrollY = window.scrollY || window.pageYOffset;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var progress = docHeight > 0 ? Math.min((scrollY / docHeight) * 100, 100) : 0;
+    progressBar.style.width = progress + '%';
+
+    siteNav.classList.toggle('scrolled', scrollY > 24);
+    backToTop.classList.toggle('visible', scrollY > 600);
+
+    if (blobA) blobA.style.transform = 'translateY(' + (scrollY * -0.06) + 'px)';
+    if (blobB) blobB.style.transform = 'translateY(' + (scrollY * 0.04) + 'px)';
+
+    updateTimelineFill();
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  backToTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ---------- Reveal-on-scroll ----------
+  var revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  if ('IntersectionObserver' in window) {
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        entry.target.classList.toggle('is-visible', entry.isIntersecting);
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(function (el) { revealObserver.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+  }
+
+  // ---------- Stat counters ----------
+  var statsTrigger = document.querySelector('.stats-trigger');
+  var statNums = document.querySelectorAll('.stat-num');
+  var countersStarted = false;
+  function animateCounts() {
+    var duration = 1200;
+    var start = performance.now();
+    function step(now) {
+      var p = Math.min((now - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      statNums.forEach(function (el) {
+        var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+        var suffix = el.getAttribute('data-suffix') || '';
+        el.textContent = Math.round(target * eased) + suffix;
+      });
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  if (statsTrigger && 'IntersectionObserver' in window) {
+    var statsObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting && !countersStarted) {
+          countersStarted = true;
+          animateCounts();
+          statsObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    statsObserver.observe(statsTrigger);
+  } else {
+    animateCounts();
+  }
+
+  // ---------- Hero spotlight ----------
+  var heroSection = document.getElementById('heroSection');
+  var spotlight = document.getElementById('spotlight');
+  if (heroSection && spotlight) {
+    heroSection.addEventListener('mousemove', function (e) {
+      var rect = heroSection.getBoundingClientRect();
+      var x = ((e.clientX - rect.left) / rect.width) * 100;
+      var y = ((e.clientY - rect.top) / rect.height) * 100;
+      spotlight.style.background = 'radial-gradient(560px circle at ' + x + '% ' + y + '%, rgba(216,189,140,0.10), transparent 60%)';
+    });
+  }
+
+  // ---------- Magnetic hero CTA ----------
+  var magnetBtn = document.getElementById('magnetBtn');
+  if (magnetBtn) {
+    magnetBtn.addEventListener('mousemove', function (e) {
+      var rect = magnetBtn.getBoundingClientRect();
+      var x = (e.clientX - rect.left - rect.width / 2) * 0.25;
+      var y = (e.clientY - rect.top - rect.height / 2) * 0.25;
+      magnetBtn.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+    });
+    magnetBtn.addEventListener('mouseleave', function () {
+      magnetBtn.style.transform = 'translate(0px,0px)';
+    });
+  }
+
+  // ---------- Hero visual tilt ----------
+  var tiltCard = document.getElementById('tiltCard');
+  if (tiltCard) {
+    tiltCard.addEventListener('mousemove', function (e) {
+      var rect = tiltCard.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width - 0.5;
+      var y = (e.clientY - rect.top) / rect.height - 0.5;
+      tiltCard.style.transform = 'perspective(900px) rotateX(' + (y * -8) + 'deg) rotateY(' + (x * 10) + 'deg)';
+    });
+    tiltCard.addEventListener('mouseleave', function () {
+      tiltCard.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+    });
+  }
+
+  // ---------- Pricing card tilt ----------
+  var pricingTilt = document.getElementById('pricingTilt');
+  if (pricingTilt) {
+    pricingTilt.addEventListener('mousemove', function (e) {
+      var rect = pricingTilt.getBoundingClientRect();
+      var x = (e.clientX - rect.left) / rect.width - 0.5;
+      var y = (e.clientY - rect.top) / rect.height - 0.5;
+      pricingTilt.style.transform = 'perspective(1000px) rotateX(' + (y * -4) + 'deg) rotateY(' + (x * 4) + 'deg)';
+    });
+    pricingTilt.addEventListener('mouseleave', function () {
+      pricingTilt.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+    });
+  }
+
+  // ---------- Timeline (scroll-filling line) ----------
+  var timelineWrap = document.querySelector('.timeline-wrap');
+  var timelineTrack = document.getElementById('timelineTrack');
+  var timelineFill = document.getElementById('timelineFill');
+  var timelineDot = document.getElementById('timelineDot');
+  var timelineLineTotal = 0, timelineLineLeft = 19, timelineLineTop = 20, timelineFillPx = 0;
+
+  function measureTimeline() {
+    if (!timelineWrap) return;
+    var dots = timelineWrap.querySelectorAll('.step-dot');
+    if (!dots.length) return;
+    var firstDot = dots[0], lastDot = dots[dots.length - 1];
+    var wrapRect = timelineWrap.getBoundingClientRect();
+    var firstRect = firstDot.getBoundingClientRect();
+    var lastRect = lastDot.getBoundingClientRect();
+    timelineLineLeft = (firstRect.left - wrapRect.left) + firstRect.width / 2;
+    timelineLineTop = (firstRect.top - wrapRect.top) + firstRect.height / 2;
+    timelineLineTotal = Math.max((lastRect.top - wrapRect.top) + lastRect.height / 2 - timelineLineTop, 0);
+    renderTimeline();
+  }
+
+  function updateTimelineFill() {
+    if (!timelineWrap) return;
+    var rect = timelineWrap.getBoundingClientRect();
+    var passed = Math.min(Math.max((window.innerHeight * 0.55) - rect.top - 20, 0), timelineLineTotal);
+    timelineFillPx = passed;
+    renderTimeline();
+  }
+
+  function renderTimeline() {
+    if (!timelineTrack) return;
+    var dotTop = timelineLineTop + Math.max(0, Math.min(timelineFillPx, timelineLineTotal));
+    timelineTrack.style.left = timelineLineLeft + 'px';
+    timelineTrack.style.top = timelineLineTop + 'px';
+    timelineTrack.style.height = timelineLineTotal + 'px';
+    timelineFill.style.left = timelineLineLeft + 'px';
+    timelineFill.style.top = timelineLineTop + 'px';
+    timelineFill.style.height = timelineFillPx + 'px';
+    timelineDot.style.left = timelineLineLeft + 'px';
+    timelineDot.style.top = dotTop + 'px';
+  }
+
+  measureTimeline();
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(measureTimeline); }
+  [300, 800, 1600].forEach(function (ms) { setTimeout(measureTimeline, ms); });
+  window.addEventListener('resize', measureTimeline, { passive: true });
+
+  // ---------- Pain rows hover swap ----------
+  document.querySelectorAll('.pain-row').forEach(function (row) {
+    var tag = row.querySelector('.pain-tag');
+    var text = row.querySelector('.pain-text');
+    var problem = row.getAttribute('data-problem');
+    var solution = row.getAttribute('data-solution');
+    row.addEventListener('mouseenter', function () {
+      row.classList.add('hovered');
+      tag.textContent = 'Как решает AI';
+      text.textContent = solution;
+    });
+    row.addEventListener('mouseleave', function () {
+      row.classList.remove('hovered');
+      tag.textContent = 'Знакомая ситуация';
+      text.textContent = problem;
+    });
+  });
+
+  // ---------- Flip cards auto-cycle ----------
+  var flipCards = document.querySelectorAll('.flip-card');
+  var FLIP_INITIAL_DELAY = 2500, FLIP_STAGGER = 1000, FLIP_HOLD = 15000;
+  var FLIP_CYCLE_MS = FLIP_INITIAL_DELAY + 3 * FLIP_STAGGER + FLIP_HOLD + 1500;
+  var flipStart = performance.now();
+  setInterval(function () {
+    var elapsed = (performance.now() - flipStart) % FLIP_CYCLE_MS;
+    flipCards.forEach(function (card, idx) {
+      var start = FLIP_INITIAL_DELAY + idx * FLIP_STAGGER;
+      var end = start + FLIP_HOLD;
+      card.classList.toggle('flipped', elapsed >= start && elapsed < end);
+    });
+  }, 200);
+
+  // ---------- FAQ accordion (one open at a time) ----------
+  document.querySelectorAll('.faq-row').forEach(function (row) {
+    row.addEventListener('click', function () {
+      var wasOpen = row.classList.contains('open');
+      document.querySelectorAll('.faq-row.open').forEach(function (r) { r.classList.remove('open'); });
+      if (!wasOpen) row.classList.add('open');
+    });
+  });
+
+  // Kick off initial state
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

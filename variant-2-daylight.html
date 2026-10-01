@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Быстрый старт с AI — Валерия</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#FAF6EF; --panel:#FFFFFF; --ink:#211E1A; --muted:#6B6459; --line:#E6DFD2;
+    --accent:#C1603A; --accent2:#9C4A2C; --forest:#33493C; --tag:#8A6F3F;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:'Inter',Arial,sans-serif;font-weight:400;background:var(--bg);color:var(--ink);overflow-x:hidden;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;margin:0;}
+  p{margin:0;}
+  button{font-family:'Inter',sans-serif;border:none;cursor:pointer;background:none;}
+  a{color:inherit;}
+  a.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;font-weight:600;transition:transform .15s ease,background .2s ease;}
+  a.btn-primary{background:var(--ink);color:var(--bg);padding:17px 32px;border-radius:4px;font-size:15px;}
+  a.btn-primary:hover{background:var(--accent);}
+  a.btn-primary:active{transform:scale(0.97);}
+  a.btn-outline{border:1.5px solid var(--ink);color:var(--ink);padding:15.5px 30px;border-radius:4px;font-size:15px;}
+  a.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+  .container{max-width:1180px;margin:0 auto;padding:0 48px;width:100%;}
+  .num-tag{font-family:'Fraunces',serif;font-style:italic;font-size:15px;color:var(--accent);margin-bottom:14px;display:block;}
+  .eyebrow{font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--tag);}
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.is-visible{opacity:1;transform:translate(0,0);}
+  hr.rule{border:none;border-top:1px solid var(--line);margin:0;}
+
+  #progressBar{position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0%;z-index:40;}
+  #siteNav{position:sticky;top:0;z-index:30;background:rgba(250,246,239,0.88);backdrop-filter:blur(8px);border-bottom:1px solid transparent;transition:border-color .25s ease,box-shadow .25s ease;}
+  #siteNav.scrolled{border-bottom:1px solid var(--line);box-shadow:0 6px 20px rgba(0,0,0,.04);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:88px;gap:16px;}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;white-space:nowrap;flex-shrink:0;font-family:'Fraunces',serif;}
+  .logo-mark{width:34px;height:34px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;color:var(--bg);flex-shrink:0;}
+  .nav-links{display:flex;align-items:center;gap:26px;}
+  a.navlink{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;white-space:nowrap;}
+  a.navlink:hover{color:var(--accent);}
+  .nav-right{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+  #hamburger{display:none;width:40px;height:40px;border-radius:4px;border:1.5px solid var(--ink);flex-direction:column;align-items:center;justify-content:center;gap:5px;flex-shrink:0;}
+  #hamburger span{width:18px;height:2px;background:var(--ink);transition:transform .25s ease,opacity .25s ease;}
+  #hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  #hamburger.open span:nth-child(2){opacity:0;}
+  #hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  #mobileMenu{max-height:0;overflow:hidden;background:var(--panel);border-bottom:1px solid var(--line);transition:max-height .3s ease;}
+  #mobileMenu.open{max-height:560px;}
+  #mobileMenu .container{display:flex;flex-direction:column;padding:8px 48px 24px;gap:2px;}
+  #mobileMenu a.navlink{padding:13px 0;border-bottom:1px solid var(--line);font-size:16px;}
+
+  .hero{padding:72px 0 90px;}
+  .hero-grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:60px;align-items:end;}
+  h1{font-size:64px;line-height:1.04;font-weight:600;letter-spacing:-1px;}
+  h1 em{font-style:italic;color:var(--accent);font-weight:500;}
+  .hero-sub{font-size:17px;line-height:1.6;color:var(--muted);max-width:420px;margin:28px 0 34px;}
+  .hero-ctas{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .hero-note{font-size:13px;color:var(--muted);margin-top:14px;}
+  .hero-aside{border-left:1px solid var(--line);padding-left:36px;}
+  .hero-aside .big-num{font-family:'Fraunces',serif;font-size:46px;color:var(--accent);line-height:1;}
+  .hero-aside .cap{font-size:13px;color:var(--muted);margin-top:8px;line-height:1.5;}
+  .hero-aside-row{margin-bottom:30px;}
+
+  .demo{margin-top:20px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:22px;}
+  .demo-head{display:flex;align-items:center;gap:8px;margin-bottom:16px;color:var(--muted);font-size:12px;letter-spacing:1px;text-transform:uppercase;}
+  .bubble{border-radius:2px;padding:12px 14px;font-size:14px;line-height:1.5;margin-bottom:10px;}
+  .bubble-user{background:var(--bg);border:1px solid var(--line);}
+  .bubble-ai{background:var(--ink);color:var(--bg);}
+  .bubble-ai.typing::after{content:'▍';animation:blink 1s step-start infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .demo-foot{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--line);}
+
+  section{padding:100px 0;}
+  section.tight{padding:70px 0;}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin-bottom:56px;flex-wrap:wrap;}
+  h2{font-size:42px;line-height:1.1;font-weight:600;letter-spacing:-.5px;max-width:560px;}
+
+  .pains-row{display:grid;grid-template-columns:repeat(3,1fr);}
+  .pain-col{padding:34px 30px 0;border-left:1px solid var(--line);}
+  .pain-col:first-child{border-left:none;padding-left:0;}
+  .pain-col .num-tag{font-size:26px;}
+  .pain-col h3{font-size:21px;font-weight:600;line-height:1.3;margin:10px 0 12px;}
+  .pain-col p{font-size:14.5px;color:var(--muted);line-height:1.6;}
+
+  .feat-rail{display:flex;gap:1px;background:var(--line);border:1px solid var(--line);overflow-x:auto;scrollbar-width:none;}
+  .feat-rail::-webkit-scrollbar{display:none;}
+  .feat-card{background:var(--panel);min-width:260px;flex:1;padding:32px 26px;display:flex;flex-direction:column;}
+  .feat-card .ico{width:40px;height:40px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:20px;}
+  .feat-card h3{font-size:18px;font-weight:600;margin-bottom:10px;}
+  .feat-card p{font-size:13.5px;color:var(--muted);line-height:1.6;margin-bottom:18px;}
+  .feat-check{font-size:12.5px;color:var(--tag);line-height:2;margin-top:auto;font-weight:500;}
+
+  .slider-wrap{background:var(--ink);color:var(--bg);border-radius:4px;padding:48px;display:flex;gap:50px;flex-wrap:wrap;align-items:center;}
+  .slider-left{flex:1;min-width:260px;}
+  .slider-left .eyebrow{color:#C9A882;}
+  .slider-left h2{color:var(--bg);font-size:30px;margin:10px 0 20px;}
+  .slider-left label{font-size:14px;color:#C9BFAE;display:block;margin-bottom:16px;}
+  input[type=range]{width:100%;accent-color:var(--accent);}
+  .slider-hours{font-family:'Fraunces',serif;font-size:30px;margin-top:12px;color:#fff;}
+  .slider-right{flex:1;min-width:220px;text-align:center;}
+  .slider-right .big{font-family:'Fraunces',serif;font-size:52px;color:#E2A165;line-height:1;}
+  .slider-right .cap{font-size:13px;color:#C9BFAE;margin-top:10px;}
+
+  .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
+  .product-card{background:var(--panel);padding:30px 24px;}
+  .product-card .ico{font-size:22px;margin-bottom:16px;}
+  .product-card h3{font-size:16px;font-weight:600;margin-bottom:8px;}
+  .product-card p{font-size:13px;color:var(--muted);line-height:1.6;}
+
+  .process-list{display:flex;flex-direction:column;}
+  .proc-row{display:grid;grid-template-columns:80px 1fr;gap:24px;padding:28px 0;border-top:1px solid var(--line);align-items:baseline;}
+  .proc-row:last-child{border-bottom:1px solid var(--line);}
+  .proc-row .num-tag{font-size:28px;margin:0;}
+  .proc-row h3{font-size:19px;font-weight:600;margin-bottom:6px;}
+  .proc-row p{font-size:14.5px;color:var(--muted);}
+
+  .cmp-table{border:1px solid var(--line);border-radius:4px;overflow:hidden;}
+  .cmp-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;border-top:1px solid var(--line);}
+  .cmp-row:first-child{border-top:none;background:var(--ink);color:var(--bg);font-size:11px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;}
+  .cmp-row > div{padding:18px 22px;font-size:14.5px;}
+  .cmp-task{font-weight:600;background:var(--panel);}
+  .cmp-bad{color:#A3806F;background:var(--panel);border-left:1px solid var(--line);}
+  .cmp-good{color:var(--forest);background:var(--panel);border-left:1px solid var(--line);font-weight:500;}
+  .cmp-label{display:none;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-right:6px;letter-spacing:1px;}
+
+  .pricing-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);}
+  .pricing-info{background:var(--panel);padding:50px;}
+  .pricing-info .eyebrow{margin-bottom:16px;}
+  .pricing-info h2{font-size:34px;margin-bottom:18px;}
+  .pricing-info p{font-size:15px;color:var(--muted);line-height:1.7;}
+  .pricing-card{background:var(--ink);color:var(--bg);padding:50px;display:flex;flex-direction:column;}
+  .price-text{font-family:'Fraunces',serif;font-size:40px;color:#E2A165;margin:16px 0 6px;}
+  .pricing-note{font-size:13px;color:#C9BFAE;margin-bottom:28px;}
+  .pricing-incl{display:flex;flex-direction:column;gap:13px;margin-bottom:30px;}
+  .pricing-incl div{display:flex;gap:10px;font-size:13.5px;color:#DCD4C6;}
+  .pricing-incl span{color:#E2A165;flex-shrink:0;}
+  .pricing-card a.btn-primary{background:#E2A165;color:var(--ink);margin-top:auto;}
+  .pricing-card a.btn-primary:hover{background:#fff;}
+
+  .niches-rail{display:flex;gap:1px;background:var(--line);border:1px solid var(--line);overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;}
+  .niches-rail::-webkit-scrollbar{display:none;}
+  .niche-card{background:var(--panel);min-width:220px;scroll-snap-align:start;padding:28px 24px;}
+  .niche-card .ico{font-size:20px;margin-bottom:14px;}
+  .niche-card h3{font-size:15px;font-weight:600;margin-bottom:6px;}
+  .niche-card p{font-size:12.5px;color:var(--muted);line-height:1.5;}
+  .rail-nav{display:flex;gap:10px;margin-top:20px;}
+  .rail-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .rail-btn:hover{background:var(--ink);color:var(--bg);}
+  .niches-note{margin-top:24px;font-size:14px;color:var(--muted);}
+  .niches-note a{color:var(--accent);font-weight:600;text-decoration:none;border-bottom:1px solid var(--accent);}
+
+  .faq-row{padding:26px 0;border-top:1px solid var(--line);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;}
+  .faq-list{border-bottom:1px solid var(--line);}
+  .faq-row h3{font-size:19px;font-weight:500;font-family:'Fraunces',serif;}
+  .faq-icon{font-size:24px;color:var(--muted);transition:transform .25s ease,color .25s ease;flex-shrink:0;}
+  .faq-row.open .faq-icon{transform:rotate(45deg);color:var(--accent);}
+  .faq-answer{max-height:0;opacity:0;overflow:hidden;transition:max-height .35s ease,opacity .3s ease;font-size:14.5px;color:var(--muted);line-height:1.6;}
+  .faq-row.open ~ .faq-answer{max-height:160px;opacity:1;padding-bottom:24px;}
+
+  .cta-final{text-align:center;padding:110px 0;}
+  .cta-final h2{font-size:46px;margin-bottom:30px;max-width:none;}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;text-align:center;font-size:13px;color:var(--muted);}
+
+  #backToTop{position:fixed;bottom:28px;right:28px;width:46px;height:46px;border-radius:50%;background:var(--ink);color:var(--bg);font-size:19px;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:35;}
+  #backToTop.visible{opacity:1;transform:translateY(0);pointer-events:auto;}
+
+  @media (max-width:980px){
+    .hero-grid{grid-template-columns:1fr;}
+    .hero-aside{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:30px;display:flex;gap:40px;flex-wrap:wrap;}
+    h1{font-size:46px;}
+    .pains-row{grid-template-columns:1fr;}
+    .pain-col{border-left:none;border-top:1px solid var(--line);padding:30px 0 0;}
+    .pain-col:first-child{border-top:none;}
+    .product-grid{grid-template-columns:1fr 1fr;}
+    .pricing-wrap{grid-template-columns:1fr;}
+  }
+  @media (max-width:860px){
+    .nav-links{display:none;}
+    #hamburger{display:flex;}
+  }
+  @media (max-width:480px){
+    .nav-right a.btn-outline{display:none;}
+    .mobile-cta{display:inline-flex !important;}
+  }
+  @media (max-width:760px){
+    .container{padding:0 24px;}
+    #mobileMenu .container{padding:8px 24px 24px;}
+    h1{font-size:36px;}
+    h2{font-size:28px;}
+    section{padding:64px 0;}
+    .cmp-row{grid-template-columns:1fr;}
+    .cmp-row:first-child{display:none;}
+    .cmp-row > div{border-left:none !important;border-top:1px solid var(--line);}
+    .cmp-task{border-top:none !important;}
+    .cmp-label{display:inline;}
+    .product-grid{grid-template-columns:1fr;}
+    .price-text{font-size:30px;word-break:break-word;}
+    .pricing-info,.pricing-card{padding:32px 24px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="progressBar"></div>
+
+<nav id="siteNav">
+  <div class="container nav-inner">
+    <div class="logo"><div class="logo-mark">V</div>Валерия</div>
+    <div class="nav-links">
+      <a class="navlink" href="#features">Возможности</a>
+      <a class="navlink" href="#product">Продукт</a>
+      <a class="navlink" href="#process">Как работает</a>
+      <a class="navlink" href="#pricing">Цена</a>
+      <a class="navlink" href="#niches">С кем работаем</a>
+      <a class="navlink" href="#faq">Вопросы</a>
+    </div>
+    <div class="nav-right">
+      <a class="btn btn-outline" href="https://t.me/valeria_ai_consult_bot" style="padding:11px 20px;font-size:14px;">Telegram</a>
+      <button id="hamburger" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div id="mobileMenu">
+  <div class="container">
+    <a class="navlink" href="#features">Возможности</a>
+    <a class="navlink" href="#product">Продукт</a>
+    <a class="navlink" href="#process">Как работает</a>
+    <a class="navlink" href="#pricing">Цена</a>
+    <a class="navlink" href="#niches">С кем работаем</a>
+    <a class="navlink" href="#faq">Вопросы</a>
+    <a class="btn btn-primary mobile-cta" href="https://t.me/valeria_ai_consult_bot" style="display:none;margin-top:16px;">Написать в Telegram →</a>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="num-tag">01 — AI-консалтинг для малого бизнеса</span>
+      <h1>AI, который<br>экономит вам<br><em>часы каждую неделю</em></h1>
+      <p class="hero-sub">Настраиваю ChatGPT и Claude под ваши задачи: посты, ответы клиентам, документы и чек-листы. Технических знаний с вашей стороны не нужно.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="https://t.me/valeria_ai_consult_bot">Обсудить в Telegram →</a>
+      </div>
+      <p class="hero-note">Первая консультация — бесплатно</p>
+    </div>
+    <div class="hero-aside">
+      <div class="hero-aside-row"><div class="big-num">2 нед.</div><div class="cap">обычный срок сборки набора под вашу нишу</div></div>
+      <div class="hero-aside-row"><div class="big-num">0</div><div class="cap">строк кода нужно от вас — всё настраиваю сама</div></div>
+      <div class="demo">
+        <div class="demo-head">Ассистент клиента · онлайн</div>
+        <div class="bubble bubble-user">Напиши ответ клиенту про перенос записи на завтра</div>
+        <div class="bubble bubble-ai" id="typingBubble">Конечно! Вот вежливый вариант:<br>«Добрый день! Уточните, пожалуйста, удобно ли перенести запись на завтра в это же время?»</div>
+        <div class="demo-foot"><span>Сгенерировано за 4 секунды</span><span>4 сек.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<section id="pains" class="tight">
+  <div class="container">
+    <div class="section-head"><div><span class="eyebrow">Знакомо?</span><h2 style="margin-top:12px;">Три вещи, которые крадут ваше время</h2></div></div>
+    <div class="pains-row">
+      <div class="pain-col reveal"><span class="num-tag">01</span><h3>Часы уходят на посты и ответы клиентам</h3><p>Каждый день одно и то же — можно делегировать нейросети за минуты.</p></div>
+      <div class="pain-col reveal"><span class="num-tag">02</span><h3>Документы собраны как попало</h3><p>Нет единой системы — сложно передать дела и стандарты команде.</p></div>
+      <div class="pain-col reveal"><span class="num-tag">03</span><h3>Пробовали AI сами — не пошло</h3><p>Без правильных промптов и структуры ChatGPT даёт общие, бесполезные ответы.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <div class="section-head"><div><span class="eyebrow">Возможности</span><h2 style="margin-top:12px;">Что умеет AI уже сегодня</h2></div></div>
+  </div>
+  <div class="container"><div class="feat-rail reveal">
+    <div class="feat-card"><div class="ico">📝</div><h3>Посты без ступора</h3><p>AI пишет черновик поста за минуту — вы правите под свой голос.</p><div class="feat-check">Темы на месяц вперёд · Черновик за 1 запрос</div></div>
+    <div class="feat-card"><div class="ico">💬</div><h3>Ответы без напряжения</h3><p>Вежливые формулировки и работа с возражениями — за секунды.</p><div class="feat-check">Шаблоны на вопросы · Экономия 5–10 ч/нед</div></div>
+    <div class="feat-card"><div class="ico">📋</div><h3>Порядок в чек-листах</h3><p>Вместо разрозненных заметок — единый регламент для команды.</p><div class="feat-check">Под вашу нишу · Инструкции для новичков</div></div>
+    <div class="feat-card"><div class="ico">💡</div><h3>Разбор и идеи</h3><p>AI раскладывает отзывы и конкурентов по полочкам за минуты.</p><div class="feat-check">Разбор отзывов · Анализ конкурентов</div></div>
+  </div></div>
+</section>
+
+<section class="tight">
+  <div class="container">
+    <div class="slider-wrap reveal">
+      <div class="slider-left">
+        <span class="eyebrow">Посчитайте сами</span>
+        <h2>Сколько часов вы вернёте себе</h2>
+        <label>Сколько часов в неделю сейчас уходит на посты, переписку и документы?</label>
+        <input type="range" id="calcRange" min="1" max="20" value="8">
+        <div class="slider-hours"><span id="calcVal">8</span> ч / неделю</div>
+      </div>
+      <div class="slider-right">
+        <div class="big"><span id="calcYear">≈ 320</span></div>
+        <div class="cap">часов в год можно освободить под AI-ассистента</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="product" class="tight">
+  <div class="container">
+    <div class="section-head"><div><span class="eyebrow">Продукт</span><h2 style="margin-top:12px;">Внутри пакета «Быстрый старт с AI»</h2></div></div>
+  </div>
+  <div class="container"><div class="product-grid reveal">
+    <div class="product-card"><div class="ico">✅</div><h3>Чек-лист внедрения AI</h3><p>Пошаговый план, что и как автоматизировать в вашей работе.</p></div>
+    <div class="product-card"><div class="ico">💬</div><h3>Промпты под ваши задачи</h3><p>Готовые команды для ChatGPT и Claude под ответы клиентам и посты.</p></div>
+    <div class="product-card"><div class="ico">🗓</div><h3>Контент-план на месяц</h3><p>Темы и структура постов, которые нейросеть допишет за вас.</p></div>
+    <div class="product-card"><div class="ico">📘</div><h3>Шаблон регламента</h3><p>Инструкция для команды — единый стандарт работы с AI.</p></div>
+  </div></div>
+</section>
+
+<section id="process">
+  <div class="container">
+    <div class="section-head"><div><span class="eyebrow">Процесс</span><h2 style="margin-top:12px;">Как это устроено</h2></div></div>
+    <div class="process-list reveal">
+      <div class="proc-row"><span class="num-tag">01</span><div><h3>Бесплатный разбор</h3><p>15–20 минут в Telegram: обсуждаем вашу задачу.</p></div></div>
+      <div class="proc-row"><span class="num-tag">02</span><div><h3>Сборка набора</h3><p>Готовлю чек-листы, промпты и контент под вашу нишу.</p></div></div>
+      <div class="proc-row"><span class="num-tag">03</span><div><h3>Передача и внедрение</h3><p>Показываю, как пользоваться, отвечаю на вопросы.</p></div></div>
+      <div class="proc-row"><span class="num-tag">04</span><div><h3>Поддержка</h3><p>На связи, если нужно что-то поправить или обновить.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="tight">
+  <div class="container">
+    <div class="section-head"><div><h2>С AI и без него — разница на практике</h2></div></div>
+    <div class="cmp-table reveal">
+      <div class="cmp-row"><div>Задача</div><div>Без AI</div><div>С AI</div></div>
+      <div class="cmp-row"><div class="cmp-task">Ответ клиенту</div><div class="cmp-bad"><span class="cmp-label">Без AI</span>10–15 минут на формулировку</div><div class="cmp-good"><span class="cmp-label">С AI</span>~30 секунд, есть на что опереться</div></div>
+      <div class="cmp-row"><div class="cmp-task">Пост в соцсети</div><div class="cmp-bad"><span class="cmp-label">Без AI</span>Полчаса на текст и подбор слов</div><div class="cmp-good"><span class="cmp-label">С AI</span>Черновик за 1 минуту</div></div>
+      <div class="cmp-row"><div class="cmp-task">Чек-лист или регламент</div><div class="cmp-bad"><span class="cmp-label">Без AI</span>Хаос в заметках и памяти</div><div class="cmp-good"><span class="cmp-label">С AI</span>Структурированный документ</div></div>
+      <div class="cmp-row"><div class="cmp-task">Обучение нового сотрудника</div><div class="cmp-bad"><span class="cmp-label">Без AI</span>Объяснять всё лично каждый раз</div><div class="cmp-good"><span class="cmp-label">С AI</span>Готовая инструкция под рукой</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="container">
+    <div class="pricing-wrap reveal">
+      <div class="pricing-info">
+        <span class="eyebrow">Пакет</span>
+        <h2>Быстрый старт с AI</h2>
+        <p>Всё, что нужно, чтобы запустить AI в вашей работе за пару недель — без лишних настроек и технической возни. Собираю индивидуально под вашу нишу на бесплатном разборе.</p>
+      </div>
+      <div class="pricing-card">
+        <div class="price-text">2 900–7 900 ₽</div>
+        <div class="pricing-note">точная цена — по итогам бесплатного разбора</div>
+        <div class="pricing-incl">
+          <div><span>—</span>Чек-лист внедрения AI под вашу нишу</div>
+          <div><span>—</span>Промпты под ваши задачи</div>
+          <div><span>—</span>Контент-план на месяц</div>
+          <div><span>—</span>Шаблон регламента для команды</div>
+        </div>
+        <a class="btn btn-primary" href="https://t.me/valeria_ai_consult_bot">Хочу такой набор →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="niches" class="tight">
+  <div class="container">
+    <div class="section-head"><div><span class="eyebrow">С кем работаем</span><h2 style="margin-top:12px;">Ниши, где AI уже приносит пользу</h2></div></div>
+  </div>
+  <div class="container">
+    <div class="niches-rail reveal" id="nicheRail">
+      <div class="niche-card"><div class="ico">🧭</div><h3>Эксперты и консультанты</h3><p>Систематизация контента и ответов клиентам</p></div>
+      <div class="niche-card"><div class="ico">🏢</div><h3>Агентства и студии</h3><p>Регламенты и шаблоны для команды из 2–10 человек</p></div>
+      <div class="niche-card"><div class="ico">🎓</div><h3>Онлайн-обучение</h3><p>Контент-планы и ответы на вопросы учеников</p></div>
+      <div class="niche-card"><div class="ico">🛠</div><h3>Услуги на выезде</h3><p>Чек-листы, переписка, запись и напоминания</p></div>
+      <div class="niche-card"><div class="ico">🛍</div><h3>Розница и шоурумы</h3><p>Описания товаров и ответы в директ без задержек</p></div>
+      <div class="niche-card"><div class="ico">💼</div><h3>Фрилансеры</h3><p>Экономия времени на рутинных текстах</p></div>
+    </div>
+    <div class="rail-nav"><button class="rail-btn" id="railLeft">←</button><button class="rail-btn" id="railRight">→</button></div>
+    <div class="niches-note">Не нашли свою нишу? <a href="https://t.me/valeria_ai_consult_bot">Спросите в Telegram</a> — на бесплатном разборе скажу честно, будет ли польза.</div>
+  </div>
+</section>
+
+<section id="faq" class="tight">
+  <div class="container">
+    <div class="section-head"><h2>Частые вопросы</h2></div>
+    <div class="faq-list reveal">
+      <div class="faq-row" data-faq="1"><h3>Нужны технические навыки?</h3><span class="faq-icon">+</span></div>
+      <div class="faq-answer">Нет. Всё настраивается под вас и объясняется простыми словами.</div>
+      <div class="faq-row" data-faq="2"><h3>Сколько занимает внедрение?</h3><span class="faq-icon">+</span></div>
+      <div class="faq-answer">Обычно 1–2 недели от разбора до готового набора.</div>
+      <div class="faq-row" data-faq="3"><h3>Как оплатить?</h3><span class="faq-icon">+</span></div>
+      <div class="faq-answer">Переводом на карту или по счёту — работаю как самозанятая, чек формируется автоматически.</div>
+      <div class="faq-row" data-faq="4"><h3>Что если мне не подойдёт?</h3><span class="faq-icon">+</span></div>
+      <div class="faq-answer">На бесплатном разборе честно скажу, будет ли польза именно вам — не буду продавать то, что не сработает.</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="container reveal">
+    <h2>Готовы попробовать<br>AI в деле?</h2>
+    <a class="btn btn-primary" href="https://t.me/valeria_ai_consult_bot">Написать в Telegram →</a>
+  </div>
+</section>
+
+<footer>Валерия · AI-консалтинг для малого бизнеса · pravodelova2001@gmail.com</footer>
+<button id="backToTop" aria-label="Наверх">↑</button>
+
+<script>
+  const nav = document.getElementById('siteNav');
+  const bar = document.getElementById('progressBar');
+  const backBtn = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    nav.classList.toggle('scrolled', y > 10);
+    backBtn.classList.toggle('visible', y > 600);
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+  });
+  backBtn.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    hamburger.classList.remove('open'); mobileMenu.classList.remove('open');
+  }));
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+  }, {threshold:0.12});
+  revealEls.forEach(el => io.observe(el));
+
+  document.querySelectorAll('.faq-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const wasOpen = row.classList.contains('open');
+      document.querySelectorAll('.faq-row').forEach(r => r.classList.remove('open'));
+      if (!wasOpen) row.classList.add('open');
+    });
+  });
+
+  const range = document.getElementById('calcRange');
+  const calcVal = document.getElementById('calcVal');
+  const calcYear = document.getElementById('calcYear');
+  function updateCalc(){
+    const h = parseInt(range.value,10);
+    calcVal.textContent = h;
+    calcYear.textContent = '≈ ' + Math.round(h*0.65*52);
+  }
+  range.addEventListener('input', updateCalc);
+  updateCalc();
+
+  const rail = document.getElementById('nicheRail');
+  document.getElementById('railLeft').addEventListener('click', () => rail.scrollBy({left:-260,behavior:'smooth'}));
+  document.getElementById('railRight').addEventListener('click', () => rail.scrollBy({left:260,behavior:'smooth'}));
+
+  const typingBubble = document.getElementById('typingBubble');
+  const fullText = typingBubble.innerHTML;
+  let typed = false;
+  const typeIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !typed) {
+        typed = true;
+        typingBubble.innerHTML = '';
+        typingBubble.classList.add('typing');
+        const plain = fullText.replace(/<br>/g,'\n');
+        let i = 0;
+        const t = setInterval(() => {
+          i++;
+          typingBubble.innerHTML = plain.slice(0,i).replace(/\n/g,'<br>');
+          if (i >= plain.length){ clearInterval(t); typingBubble.classList.remove('typing'); }
+        }, 14);
+      }
+    });
+  }, {threshold:0.6});
+  typeIo.observe(typingBubble);
+</script>
+</body>
+</html>

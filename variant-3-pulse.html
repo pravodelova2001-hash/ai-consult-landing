@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Быстрый старт с AI — Валерия</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#0A0A10; --panel:#121219; --panel2:#171721; --ink:#F2F3F7; --muted:#8A8BA0; --line:rgba(255,255,255,0.09);
+    --mint:#5EEAD4; --violet:#A78BFA; --mint-d:#1F3A35;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:'Inter',Arial,sans-serif;font-weight:400;background:var(--bg);color:var(--ink);overflow-x:hidden;
+    background-image:radial-gradient(circle,rgba(255,255,255,0.045) 1px,transparent 1px);background-size:26px 26px;}
+  h1,h2,h3{font-family:'Space Grotesk',Arial,sans-serif;margin:0;font-weight:600;}
+  p{margin:0;}
+  button{font-family:'Inter',sans-serif;border:none;cursor:pointer;background:none;}
+  a{color:inherit;}
+  code,.mono{font-family:'JetBrains Mono',monospace;}
+  a.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;font-weight:600;transition:transform .15s ease,box-shadow .2s ease;}
+  a.btn-primary{background:var(--mint);color:#06211C;padding:16px 32px;border-radius:10px;font-size:15px;box-shadow:0 0 0 1px rgba(94,234,212,.3),0 12px 28px rgba(94,234,212,.15);}
+  a.btn-primary:hover{box-shadow:0 0 0 1px rgba(94,234,212,.5),0 16px 36px rgba(94,234,212,.28);transform:translateY(-1px);}
+  a.btn-primary:active{transform:scale(0.97);}
+  a.btn-ghost{border:1px solid var(--line);color:var(--ink);padding:15px 28px;border-radius:10px;font-size:15px;}
+  a.btn-ghost:hover{border-color:var(--mint);color:var(--mint);}
+  .container{max-width:1180px;margin:0 auto;padding:0 44px;width:100%;}
+  .grad-text{background:linear-gradient(90deg,var(--mint),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;letter-spacing:1px;color:var(--mint);display:flex;align-items:center;gap:8px;}
+  .eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 8px var(--mint);}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;transition:transform .2s ease,border-color .2s ease;}
+  .card:hover{transform:translateY(-3px);border-color:rgba(94,234,212,.4);}
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.is-visible{opacity:1;transform:translate(0,0);}
+
+  #progressBar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--mint),var(--violet));width:0%;z-index:40;}
+  #siteNav{position:sticky;top:0;z-index:30;background:rgba(10,10,16,0.55);backdrop-filter:blur(10px);border-bottom:1px solid transparent;transition:border-color .25s ease,background .25s ease;}
+  #siteNav.scrolled{background:rgba(10,10,16,0.92);border-bottom:1px solid var(--line);}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:80px;gap:16px;}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;white-space:nowrap;flex-shrink:0;font-family:'Space Grotesk',sans-serif;}
+  .logo-mark{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--mint),var(--violet));display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;color:#0A0A10;flex-shrink:0;}
+  .nav-links{display:flex;align-items:center;gap:24px;}
+  a.navlink{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;white-space:nowrap;}
+  a.navlink:hover{color:var(--mint);}
+  .nav-right{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+  #hamburger{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);flex-direction:column;align-items:center;justify-content:center;gap:5px;flex-shrink:0;}
+  #hamburger span{width:18px;height:2px;background:var(--ink);transition:transform .25s ease,opacity .25s ease;}
+  #hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  #hamburger.open span:nth-child(2){opacity:0;}
+  #hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  #mobileMenu{max-height:0;overflow:hidden;background:var(--panel);border-bottom:1px solid var(--line);transition:max-height .3s ease;}
+  #mobileMenu.open{max-height:560px;}
+  #mobileMenu .container{display:flex;flex-direction:column;padding:8px 44px 24px;gap:2px;}
+  #mobileMenu a.navlink{padding:13px 0;border-bottom:1px solid var(--line);font-size:16px;}
+
+  .hero{position:relative;padding:76px 0 60px;overflow:hidden;}
+  .blob{position:absolute;border-radius:50%;filter:blur(40px);animation:floatBlob 10s ease-in-out infinite;}
+  @keyframes floatBlob{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(24px,-18px) scale(1.08);}}
+  .hero-grid{display:flex;gap:50px;align-items:center;flex-wrap:wrap;position:relative;z-index:2;}
+  .hero-copy{flex:1.15;min-width:300px;}
+  .hero-visual{flex:1;min-width:280px;display:flex;justify-content:center;}
+  .chip-hero{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;font-size:12px;font-family:'JetBrains Mono',monospace;border:1px solid var(--line);color:var(--mint);margin-bottom:22px;}
+  h1{font-size:48px;line-height:1.12;margin-bottom:22px;letter-spacing:-.5px;}
+  .hero-sub{font-size:16.5px;line-height:1.65;color:var(--muted);max-width:460px;margin-bottom:30px;}
+  .hero-ctas{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:8px;}
+  .hero-note{font-size:13px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+
+  .demo{position:relative;width:100%;max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:0 30px 70px rgba(0,0,0,.5);}
+  .demo-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;}
+  .demo-dots{display:flex;gap:6px;}
+  .demo-dots span{width:8px;height:8px;border-radius:50%;background:var(--line);}
+  .bubble{border-radius:10px;padding:13px 15px;font-size:14px;line-height:1.5;margin-bottom:10px;}
+  .bubble-user{background:var(--panel2);border:1px solid var(--line);margin-left:24px;}
+  .bubble-ai{background:linear-gradient(135deg,var(--mint-d),#141a2b);border:1px solid rgba(94,234,212,.25);}
+  .bubble-ai.typing::after{content:'▍';animation:blink 1s step-start infinite;color:var(--mint);}
+  @keyframes blink{50%{opacity:0;}}
+  .demo-foot{display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted);margin-top:4px;padding-top:12px;border-top:1px solid var(--line);font-family:'JetBrains Mono',monospace;}
+  .dot-online{width:7px;height:7px;border-radius:50%;background:var(--mint);display:inline-block;margin-right:5px;box-shadow:0 0 8px var(--mint);animation:pulseDot 2s infinite;}
+  @keyframes pulseDot{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+  .stats{padding:46px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+  .stat-box{text-align:center;}
+  .stat-num{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;color:var(--mint);}
+  .stat-label{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.4;font-family:'JetBrains Mono',monospace;}
+  .stat-qual{font-size:16px;font-weight:600;font-family:'Space Grotesk',sans-serif;color:var(--mint);line-height:1.3;}
+
+  section{padding:88px 0;}
+  .section-head{margin-bottom:46px;max-width:620px;}
+  h2{font-size:34px;line-height:1.2;margin-top:12px;letter-spacing:-.4px;}
+
+  .pains-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .pain-card{padding:28px 24px;}
+  .pain-icon{font-size:24px;margin-bottom:14px;}
+  .pain-tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--violet);margin-bottom:10px;}
+  .pain-card h3{font-size:18px;margin-bottom:10px;line-height:1.3;}
+  .pain-card p{font-size:13.5px;color:var(--muted);line-height:1.6;}
+
+  .feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .feat-card{padding:24px 20px;display:flex;flex-direction:column;}
+  .feat-icon{font-size:22px;margin-bottom:14px;}
+  .feat-card h3{font-size:16px;margin-bottom:8px;}
+  .feat-card p{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:16px;}
+  .feat-check{font-size:12px;color:var(--mint);line-height:2;margin-top:auto;font-family:'JetBrains Mono',monospace;}
+
+  .funnel{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;padding:20px 0 10px;}
+  .funnel-node{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 26px;text-align:center;min-width:160px;}
+  .funnel-node .ico{font-size:24px;margin-bottom:8px;}
+  .funnel-node h3{font-size:14px;}
+  .funnel-node p{font-size:11.5px;color:var(--muted);margin-top:4px;font-family:'JetBrains Mono',monospace;}
+  .funnel-arrow{width:60px;height:2px;background:repeating-linear-gradient(90deg,var(--mint) 0 6px,transparent 6px 12px);position:relative;flex-shrink:0;}
+  .funnel-arrow::after{content:'→';position:absolute;right:-10px;top:-11px;color:var(--mint);}
+  @media (max-width:700px){.funnel{flex-direction:column;}.funnel-arrow{width:2px;height:40px;background:repeating-linear-gradient(180deg,var(--mint) 0 6px,transparent 6px 12px);}.funnel-arrow::after{content:'↓';right:-8px;top:auto;bottom:-14px;}}
+
+  .calc{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:38px;display:flex;gap:40px;flex-wrap:wrap;align-items:center;}
+  .calc-left{flex:1;min-width:260px;}
+  .calc-left label{font-size:13.5px;color:var(--muted);display:block;margin-bottom:14px;font-family:'JetBrains Mono',monospace;}
+  input[type=range]{width:100%;accent-color:var(--mint);}
+  .calc-hours{font-family:'Space Grotesk',sans-serif;font-size:28px;color:var(--mint);margin-top:10px;}
+  .calc-right{flex:1;min-width:220px;text-align:center;border-left:1px solid var(--line);padding-left:40px;}
+  .calc-right .big{font-family:'Space Grotesk',sans-serif;font-size:42px;color:var(--mint);line-height:1;}
+  .calc-right .cap{font-size:12.5px;color:var(--muted);margin-top:8px;font-family:'JetBrains Mono',monospace;}
+  @media (max-width:700px){.calc-right{border-left:none;padding-left:0;border-top:1px solid var(--line);padding-top:24px;}}
+
+  .process-wrap{position:relative;}
+  .proc-step{display:flex;gap:20px;padding-bottom:36px;position:relative;}
+  .proc-step:last-child{padding-bottom:0;}
+  .proc-line{position:absolute;left:19px;top:42px;bottom:0;width:1px;background:var(--line);}
+  .proc-step:last-child .proc-line{display:none;}
+  .proc-num{width:40px;height:40px;border-radius:10px;border:1px solid var(--mint);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;color:var(--mint);flex-shrink:0;background:var(--bg);z-index:1;}
+  .proc-step h3{font-size:17px;margin-bottom:6px;}
+  .proc-step p{font-size:13.5px;color:var(--muted);}
+
+  .cmp{border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .cmp-row{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:16px;padding:16px 22px;align-items:center;border-top:1px solid var(--line);font-size:13.5px;}
+  .cmp-row:first-child{border-top:none;background:var(--panel2);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--muted);}
+  .cmp-task{color:var(--ink);}
+  .cmp-bad{color:#C38A94;}
+  .cmp-good{color:var(--mint);}
+  .cmp-label{display:none;font-size:10.5px;font-family:'JetBrains Mono',monospace;color:var(--muted);margin-right:6px;}
+
+  .pricing-wrap{display:flex;justify-content:center;}
+  .pricing-card{position:relative;max-width:480px;width:100%;background:var(--panel);border:1px solid rgba(94,234,212,.35);border-radius:20px;padding:42px;text-align:center;overflow:hidden;}
+  .pricing-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(94,234,212,.12),transparent 60%);pointer-events:none;}
+  .pricing-chip{display:inline-block;padding:6px 14px;border-radius:999px;border:1px solid var(--line);font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--mint);margin-bottom:18px;}
+  .price-text{font-family:'Space Grotesk',sans-serif;font-size:36px;color:var(--mint);margin:12px 0 6px;}
+  .pricing-note{font-size:12.5px;color:var(--muted);margin-bottom:26px;font-family:'JetBrains Mono',monospace;}
+  .pricing-incl{text-align:left;margin:26px 0;display:flex;flex-direction:column;gap:13px;}
+  .pricing-incl div{display:flex;gap:12px;font-size:13.5px;color:var(--muted);align-items:flex-start;}
+  .pricing-incl span.ico{color:var(--mint);flex-shrink:0;}
+
+  .niche-tabs{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px;}
+  .niche-tab{padding:10px 18px;border-radius:999px;border:1px solid var(--line);font-size:13px;color:var(--muted);cursor:pointer;transition:border-color .2s,color .2s;}
+  .niche-tab.active{border-color:var(--mint);color:var(--mint);}
+  .niche-panel{display:none;padding:30px;}
+  .niche-panel.active{display:block;}
+  .niche-panel .ico{font-size:26px;margin-bottom:12px;}
+  .niche-panel h3{font-size:19px;margin-bottom:8px;}
+  .niche-panel p{font-size:14px;color:var(--muted);line-height:1.6;}
+  .niches-note{text-align:center;margin-top:24px;font-size:13.5px;color:var(--muted);}
+  .niches-note a{color:var(--mint);text-decoration:none;border-bottom:1px solid rgba(94,234,212,.4);}
+
+  .faq-row{padding:22px 0;border-bottom:1px solid var(--line);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;}
+  .faq-row h3{font-size:16px;font-weight:500;font-family:'Inter',sans-serif;}
+  .faq-icon{font-size:22px;color:var(--muted);transition:transform .25s ease,color .25s ease;flex-shrink:0;font-family:'JetBrains Mono',monospace;}
+  .faq-row.open .faq-icon{transform:rotate(45deg);color:var(--mint);}
+  .faq-answer{max-height:0;opacity:0;overflow:hidden;transition:max-height .35s ease,opacity .3s ease;font-size:14px;color:var(--muted);line-height:1.6;}
+  .faq-row.open ~ .faq-answer{max-height:160px;opacity:1;padding-bottom:20px;}
+
+  .cta-final{text-align:center;padding:100px 0;}
+  .cta-final h2{font-size:36px;margin-bottom:28px;}
+
+  footer{border-top:1px solid var(--line);padding:30px 0;text-align:center;font-size:12.5px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+
+  #backToTop{position:fixed;bottom:28px;right:28px;width:46px;height:46px;border-radius:12px;background:var(--mint);color:#06211C;font-size:19px;box-shadow:0 12px 28px rgba(94,234,212,.25);opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:35;}
+  #backToTop.visible{opacity:1;transform:translateY(0);pointer-events:auto;}
+
+  #sideDots{position:fixed;right:28px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;z-index:35;}
+  #sideDots button{width:8px;height:8px;border-radius:50%;background:var(--line);transition:background .2s,transform .2s;}
+  #sideDots button.active{background:var(--mint);transform:scale(1.4);}
+  @media (max-width:1180px){#sideDots{display:none;}}
+
+  @media (max-width:980px){
+    .pains-grid{grid-template-columns:1fr 1fr;}
+    .feat-grid{grid-template-columns:1fr 1fr;}
+    .stats-grid{grid-template-columns:1fr 1fr;row-gap:28px;}
+  }
+  @media (max-width:860px){
+    .nav-links{display:none;}
+    #hamburger{display:flex;}
+  }
+  @media (max-width:480px){
+    .nav-right a.btn-ghost{display:none;}
+    .mobile-cta{display:inline-flex !important;}
+  }
+  @media (max-width:760px){
+    .container{padding:0 22px;}
+    #mobileMenu .container{padding:8px 22px 24px;}
+    h1{font-size:33px;}
+    h2{font-size:26px;}
+    .pains-grid{grid-template-columns:1fr;}
+    .feat-grid{grid-template-columns:1fr;}
+    .cmp-row{grid-template-columns:1fr;gap:4px;}
+    .cmp-row:first-child{display:none;}
+    .cmp-label{display:inline;}
+    section{padding:58px 0;}
+    .pricing-card{padding:28px 20px;}
+    .price-text{font-size:28px;word-break:break-word;}
+  }
+</style>
+</head>
+<body>
+
+<div id="progressBar"></div>
+<div id="sideDots">
+  <button data-target="#hero-anchor" class="active"></button>
+  <button data-target="#pains"></button>
+  <button data-target="#features"></button>
+  <button data-target="#pricing"></button>
+  <button data-target="#faq"></button>
+</div>
+
+<nav id="siteNav">
+  <div class="container nav-inner">
+    <div class="logo"><div class="logo-mark">V</div>Валерия · AI-консалтинг</div>
+    <div class="nav-links">
+      <a class="navlink" href="#features">Возможности</a>
+      <a class="navlink" href="#product">Продукт</a>
+      <a class="navlink" href="#process">Как работает</a>
+      <a class="navlink" href="#pricing">Цена</a>
+      <a class="navlink" href="#niches">С кем работаем</a>
+      <a class="navlink" href="#faq">Вопросы</a>
+    </div>
+    <div class="nav-right">
+      <a class="btn btn-ghost" href="https://t.me/valeria_ai_consult_bot" style="padding:10px 20px;font-size:14px;">Telegram</a>
+      <button id="hamburger" aria-label="Меню"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div id="mobileMenu">
+  <div class="container">
+    <a class="navlink" href="#features">Возможности</a>
+    <a class="navlink" href="#product">Продукт</a>
+    <a class="navlink" href="#process">Как работает</a>
+    <a class="navlink" href="#pricing">Цена</a>
+    <a class="navlink" href="#niches">С кем работаем</a>
+    <a class="navlink" href="#faq">Вопросы</a>
+    <a class="btn btn-primary mobile-cta" href="https://t.me/valeria_ai_consult_bot" style="display:none;margin-top:16px;">Написать в Telegram →</a>
+  </div>
+</div>
+
+<div id="hero-anchor"></div>
+<section class="hero">
+  <div class="blob" style="width:340px;height:340px;top:-100px;right:-60px;background:radial-gradient(circle,rgba(94,234,212,.22),transparent 70%);"></div>
+  <div class="blob" style="width:260px;height:260px;top:240px;left:-100px;background:radial-gradient(circle,rgba(167,139,250,.2),transparent 70%);animation-delay:-3s;"></div>
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <div class="chip-hero">&lt;/&gt; AI-консалтинг для малого бизнеса</div>
+      <h1>AI, который экономит вам <span class="grad-text">часы каждую неделю</span></h1>
+      <p class="hero-sub">Настраиваю ChatGPT и Claude под ваши задачи: посты, ответы клиентам, документы и чек-листы. Технических знаний с вашей стороны не нужно.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="https://t.me/valeria_ai_consult_bot">Обсудить в Telegram →</a>
+      </div>
+      <p class="hero-note">// первая консультация — бесплатно</p>
+    </div>
+    <div class="hero-visual">
+      <div class="demo">
+        <div class="demo-head"><div class="demo-dots"><span></span><span></span><span></span></div>ассистент_клиента.chat</div>
+        <div class="bubble bubble-user">Напиши ответ клиенту про перенос записи на завтра</div>
+        <div class="bubble bubble-ai" id="typingBubble">Конечно! Вот вежливый вариант:<br>«Добрый день! Уточните, пожалуйста, удобно ли перенести запись на завтра в это же время?»</div>
+        <div class="demo-foot"><span>сгенерировано за 4с</span><span><span class="dot-online"></span>online</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="stats">
+  <div class="container stats-grid">
+    <div class="stat-box reveal"><div class="stat-qual">Лично, без конвейера</div><div class="stat-label">каждый пакет — под вашу нишу</div></div>
+    <div class="stat-box reveal"><div class="stat-num" data-count="2">0</div><div class="stat-label">недели — срок сборки</div></div>
+    <div class="stat-box reveal"><div class="stat-num" data-count="4">0</div><div class="stat-label">секунды на черновик</div></div>
+    <div class="stat-box reveal"><div class="stat-num" data-count="0">0</div><div class="stat-label">строк кода от вас</div></div>
+  </div>
+</div>
+
+<section id="pains">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">знакомо?</div>
+      <h2>Три вещи, которые крадут ваше время</h2>
+    </div>
+    <div class="pains-grid">
+      <div class="card pain-card reveal"><div class="pain-icon">⏱</div><div class="pain-tag">// ситуация</div><h3>Часы уходят на посты и ответы клиентам</h3><p>Каждый день одно и то же — можно делегировать нейросети за минуты.</p></div>
+      <div class="card pain-card reveal"><div class="pain-icon">🗂</div><div class="pain-tag">// ситуация</div><h3>Документы собраны как попало</h3><p>Нет единой системы — сложно передать дела и стандарты команде.</p></div>
+      <div class="card pain-card reveal"><div class="pain-icon">🤖</div><div class="pain-tag">// ситуация</div><h3>Пробовали AI сами — не пошло</h3><p>Без правильных промптов и структуры ChatGPT даёт общие, бесполезные ответы.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">возможности</div>
+      <h2>Что умеет AI уже сегодня</h2>
+    </div>
+    <div class="feat-grid">
+      <div class="card feat-card reveal"><div class="feat-icon">📝</div><h3>Посты без ступора</h3><p>AI пишет черновик поста за минуту — вы правите под свой голос.</p><div class="feat-check">темы на месяц · 1 запрос</div></div>
+      <div class="card feat-card reveal"><div class="feat-icon">💬</div><h3>Ответы без напряжения</h3><p>Вежливые формулировки и работа с возражениями — за секунды.</p><div class="feat-check">шаблоны · −5–10ч/нед</div></div>
+      <div class="card feat-card reveal"><div class="feat-icon">📋</div><h3>Порядок в чек-листах</h3><p>Вместо разрозненных заметок — единый регламент для команды.</p><div class="feat-check">под нишу · для новичков</div></div>
+      <div class="card feat-card reveal"><div class="feat-icon">💡</div><h3>Разбор и идеи</h3><p>AI раскладывает отзывы и конкурентов по полочкам за минуты.</p><div class="feat-check">отзывы · конкуренты</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="funnel">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">воронка</div>
+      <h2>Как клиент доходит до вас</h2>
+    </div>
+    <div class="funnel reveal">
+      <div class="funnel-node"><div class="ico">🌐</div><h3>Лендинг</h3><p>рассказывает об офере</p></div>
+      <div class="funnel-arrow"></div>
+      <div class="funnel-node"><div class="ico">💬</div><h3>Telegram-бот</h3><p>принимает заявку</p></div>
+      <div class="funnel-arrow"></div>
+      <div class="funnel-node"><div class="ico">🤝</div><h3>Бесплатный разбор</h3><p>вы и клиент — лично</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="calc">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">посчитайте сами</div>
+      <h2>Сколько часов вы вернёте себе</h2>
+    </div>
+    <div class="calc reveal">
+      <div class="calc-left">
+        <label>сколько часов в неделю сейчас уходит на посты, переписку и документы?</label>
+        <input type="range" id="calcRange" min="1" max="20" value="8">
+        <div class="calc-hours"><span id="calcVal">8</span> ч / неделю</div>
+      </div>
+      <div class="calc-right">
+        <div class="big"><span id="calcYear">≈ 320</span></div>
+        <div class="cap">часов в год можно освободить под AI-ассистента</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="product">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">продукт</div>
+      <h2>Внутри пакета «Быстрый старт с AI»</h2>
+    </div>
+    <div class="feat-grid">
+      <div class="card feat-card reveal"><div class="feat-icon">✅</div><h3>Чек-лист внедрения AI</h3><p>Пошаговый план, что и как автоматизировать в вашей работе.</p></div>
+      <div class="card feat-card reveal"><div class="feat-icon">💬</div><h3>Промпты под ваши задачи</h3><p>Готовые команды для ChatGPT и Claude под ответы клиентам и посты.</p></div>
+      <div class="card feat-card reveal"><div class="feat-icon">🗓</div><h3>Контент-план на месяц</h3><p>Темы и структура постов, которые нейросеть допишет за вас.</p></div>
+      <div class="card feat-card reveal"><div class="feat-icon">📘</div><h3>Шаблон регламента</h3><p>Инструкция для команды — единый стандарт работы с AI.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">процесс</div>
+      <h2>Как это устроено</h2>
+    </div>
+    <div class="process-wrap">
+      <div class="proc-step reveal"><div class="proc-line"></div><div class="proc-num">01</div><div><h3>Бесплатный разбор</h3><p>15–20 минут в Telegram: обсуждаем вашу задачу.</p></div></div>
+      <div class="proc-step reveal"><div class="proc-line"></div><div class="proc-num">02</div><div><h3>Сборка набора</h3><p>Готовлю чек-листы, промпты и контент под вашу нишу.</p></div></div>
+      <div class="proc-step reveal"><div class="proc-line"></div><div class="proc-num">03</div><div><h3>Передача и внедрение</h3><p>Показываю, как пользоваться, отвечаю на вопросы.</p></div></div>
+      <div class="proc-step reveal"><div class="proc-num">04</div><div><h3>Поддержка</h3><p>На связи, если нужно что-то поправить или обновить.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="container">
+    <div class="section-head reveal"><h2>С AI и без него — разница на практике</h2></div>
+    <div class="cmp reveal">
+      <div class="cmp-row"><div>задача</div><div>без AI</div><div>с AI</div></div>
+      <div class="cmp-row"><div class="cmp-task">Ответ клиенту</div><div><span class="cmp-label">без AI</span><span class="cmp-bad">10–15 минут на формулировку</span></div><div><span class="cmp-label">с AI</span><span class="cmp-good">~30 секунд, есть на что опереться</span></div></div>
+      <div class="cmp-row"><div class="cmp-task">Пост в соцсети</div><div><span class="cmp-label">без AI</span><span class="cmp-bad">Полчаса на текст и подбор слов</span></div><div><span class="cmp-label">с AI</span><span class="cmp-good">Черновик за 1 минуту</span></div></div>
+      <div class="cmp-row"><div class="cmp-task">Чек-лист или регламент</div><div><span class="cmp-label">без AI</span><span class="cmp-bad">Хаос в заметках и памяти</span></div><div><span class="cmp-label">с AI</span><span class="cmp-good">Структурированный документ</span></div></div>
+      <div class="cmp-row"><div class="cmp-task">Обучение нового сотрудника</div><div><span class="cmp-label">без AI</span><span class="cmp-bad">Объяснять всё лично каждый раз</span></div><div><span class="cmp-label">с AI</span><span class="cmp-good">Готовая инструкция под рукой</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing">
+  <div class="container pricing-wrap">
+    <div class="pricing-card reveal">
+      <div class="pricing-chip">пакет</div>
+      <h2>Быстрый старт с AI</h2>
+      <div class="price-text">2 900–7 900 ₽</div>
+      <div class="pricing-note">// точная цена — по итогам бесплатного разбора</div>
+      <div class="pricing-incl">
+        <div><span class="ico">▸</span>Чек-лист внедрения AI под вашу нишу</div>
+        <div><span class="ico">▸</span>Промпты под ваши задачи</div>
+        <div><span class="ico">▸</span>Контент-план на месяц</div>
+        <div><span class="ico">▸</span>Шаблон регламента для команды</div>
+      </div>
+      <a class="btn btn-primary" style="width:100%;" href="https://t.me/valeria_ai_consult_bot">Хочу такой набор →</a>
+    </div>
+  </div>
+</section>
+
+<section id="niches">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">с кем работаем</div>
+      <h2>Ниши, где AI уже приносит пользу</h2>
+    </div>
+    <div class="niche-tabs reveal" id="nicheTabs">
+      <div class="niche-tab active" data-tab="0">🧭 Эксперты</div>
+      <div class="niche-tab" data-tab="1">🏢 Агентства</div>
+      <div class="niche-tab" data-tab="2">🎓 Обучение</div>
+      <div class="niche-tab" data-tab="3">🛠 Услуги на выезде</div>
+      <div class="niche-tab" data-tab="4">🛍 Розница</div>
+      <div class="niche-tab" data-tab="5">💼 Фриланс</div>
+    </div>
+    <div class="card reveal">
+      <div class="niche-panel active" data-panel="0"><div class="ico">🧭</div><h3>Эксперты и консультанты</h3><p>Систематизация экспертного контента и ответов клиентам — чтобы знания не терялись в переписках.</p></div>
+      <div class="niche-panel" data-panel="1"><div class="ico">🏢</div><h3>Небольшие агентства и студии</h3><p>Регламенты и шаблоны для команды из 2–10 человек — единый стандарт без лишних созвонов.</p></div>
+      <div class="niche-panel" data-panel="2"><div class="ico">🎓</div><h3>Онлайн-обучение</h3><p>Контент-планы и ответы на вопросы учеников — быстрее и без потери тона голоса.</p></div>
+      <div class="niche-panel" data-panel="3"><div class="ico">🛠</div><h3>Сфера услуг на выезде</h3><p>Чек-листы, переписка с клиентами, запись и напоминания — меньше рутины между заказами.</p></div>
+      <div class="niche-panel" data-panel="4"><div class="ico">🛍</div><h3>Розница и шоурумы</h3><p>Описания товаров и ответы в директ без задержек — клиент не уходит к тому, кто ответил быстрее.</p></div>
+      <div class="niche-panel" data-panel="5"><div class="ico">💼</div><h3>Фрилансеры и специалисты</h3><p>Экономия времени на рутинных текстах и переписке — больше часов на саму работу.</p></div>
+    </div>
+    <div class="niches-note reveal">Не нашли свою нишу? <a href="https://t.me/valeria_ai_consult_bot">Спросите в Telegram</a> — на бесплатном разборе скажу честно, будет ли польза.</div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="container">
+    <div class="section-head reveal"><h2>Частые вопросы</h2></div>
+    <div class="faq-list reveal">
+      <div class="faq-row" data-faq="1"><h3>Нужны технические навыки?</h3><span class="faq-icon">+</span></div>
+      <div class="faq-answer">Нет. Всё настраивается под вас и объясняется простыми словами.</div>
+      <div class="faq-row" data-faq="2"><h3>Сколько занимает внедрение?</h3><span class="faq-icon">+</span></div>
+      <div class="faq-answer">Обычно 1–2 недели от разбора до готового набора.</div>
+      <div class="faq-row" data-faq="3"><h3>Как оплатить?</h3><span class="faq-icon">+</span></div>
+      <div class="faq-answer">Переводом на карту или по счёту — работаю как самозанятая, чек формируется автоматически.</div>
+      <div class="faq-row" data-faq="4"><h3>Что если мне не подойдёт?</h3><span class="faq-icon">+</span></div>
+      <div class="faq-answer">На бесплатном разборе честно скажу, будет ли польза именно вам — не буду продавать то, что не сработает.</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <div class="container reveal">
+    <h2>Готовы попробовать AI в деле?</h2>
+    <a class="btn btn-primary" href="https://t.me/valeria_ai_consult_bot">Написать в Telegram →</a>
+  </div>
+</section>
+
+<footer>Валерия · AI-консалтинг для малого бизнеса · pravodelova2001@gmail.com</footer>
+<button id="backToTop" aria-label="Наверх">↑</button>
+
+<script>
+  const nav = document.getElementById('siteNav');
+  const bar = document.getElementById('progressBar');
+  const backBtn = document.getElementById('backToTop');
+  const sideDots = document.querySelectorAll('#sideDots button');
+  const dotTargets = Array.from(sideDots).map(b => document.querySelector(b.dataset.target));
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    nav.classList.toggle('scrolled', y > 10);
+    backBtn.classList.toggle('visible', y > 600);
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (h > 0 ? (y / h) * 100 : 0) + '%';
+    let activeIdx = 0;
+    dotTargets.forEach((t, i) => { if (t && t.getBoundingClientRect().top < 160) activeIdx = i; });
+    sideDots.forEach((b, i) => b.classList.toggle('active', i === activeIdx));
+  });
+  backBtn.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+  sideDots.forEach((b, i) => b.addEventListener('click', () => dotTargets[i].scrollIntoView({behavior:'smooth'})));
+
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    hamburger.classList.remove('open'); mobileMenu.classList.remove('open');
+  }));
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('is-visible'); });
+  }, {threshold:0.12});
+  revealEls.forEach(el => io.observe(el));
+
+  const counters = document.querySelectorAll('.stat-num');
+  const counterIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target; const target = parseInt(el.dataset.count,10);
+      let cur = 0; const step = Math.max(1, Math.round(target/30));
+      const t = setInterval(() => { cur += step; if (cur >= target){cur = target; clearInterval(t);} el.textContent = cur; }, 30);
+      counterIo.unobserve(el);
+    });
+  }, {threshold:0.5});
+  counters.forEach(el => counterIo.observe(el));
+
+  document.querySelectorAll('.faq-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const wasOpen = row.classList.contains('open');
+      document.querySelectorAll('.faq-row').forEach(r => r.classList.remove('open'));
+      if (!wasOpen) row.classList.add('open');
+    });
+  });
+
+  const range = document.getElementById('calcRange');
+  const calcVal = document.getElementById('calcVal');
+  const calcYear = document.getElementById('calcYear');
+  function updateCalc(){
+    const h = parseInt(range.value,10);
+    calcVal.textContent = h;
+    calcYear.textContent = '≈ ' + Math.round(h*0.65*52);
+  }
+  range.addEventListener('input', updateCalc);
+  updateCalc();
+
+  document.querySelectorAll('.niche-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.niche-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.niche-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelector('.niche-panel[data-panel="'+tab.dataset.tab+'"]').classList.add('active');
+    });
+  });
+
+  const typingBubble = document.getElementById('typingBubble');
+  const fullText = typingBubble.innerHTML;
+  let typed = false;
+  const typeIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !typed) {
+        typed = true;
+        typingBubble.innerHTML = '';
+        typingBubble.classList.add('typing');
+        const plain = fullText.replace(/<br>/g,'\n');
+        let i = 0;
+        const t = setInterval(() => {
+          i++;
+          typingBubble.innerHTML = plain.slice(0,i).replace(/\n/g,'<br>');
+          if (i >= plain.length){ clearInterval(t); typingBubble.classList.remove('typing'); }
+        }, 14);
+      }
+    });
+  }, {threshold:0.6});
+  typeIo.observe(typingBubble);
+</script>
+</body>
+</html>
